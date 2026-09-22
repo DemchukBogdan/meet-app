@@ -8,7 +8,22 @@
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yourcompany.mobileapp"
+      "bundleIdentifier": "com.yourcompany.mobileapp",
+      "entitlements": {
+        "com.apple.security.application-groups": [
+          "group.com.yourcompany.mobileapp"
+        ],
+        "com.apple.developer.avfoundation.multitasking-camera-access": true
+      },
+      "infoPlist": {
+        "NSCameraUsageDescription": "For people to see you during meetings, we need access to your camera.",
+        "NSMicrophoneUsageDescription": "For people to hear you during meetings, we need access to your microphone.",
+        "NSBluetoothAlwaysUsageDescription": "We will use Bluetooth to connect to wireless headphones during meetings.",
+        "NSBluetoothPeripheralUsageDescription": "We will use your Bluetooth to access your Bluetooth headphones.",
+        "NSPhotoLibraryUsageDescription": "For people to share, we need access to your photos.",
+        "NSLocalNetworkUsageDescription": "Allow local network access so the development client can load JavaScript from Metro.",
+        "UIBackgroundModes": ["audio", "voip"]
+      }
     },
     "android": {
       "package": "com.yourcompany.mobileapp",
@@ -26,19 +41,28 @@
     "plugins": [
       "expo-dev-client",
       [
+        "expo-camera",
+        {
+          "cameraPermission": "For people to see you during meetings, we need access to your camera.",
+          "microphonePermission": "For people to hear you during meetings, we need access to your microphone.",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
         "expo-build-properties",
         {
           "android": {
-            "minSdkVersion": 26,
+            "minSdkVersion": 28,
             "targetSdkVersion": 35,
-            "compileSdkVersion": 35
+            "compileSdkVersion": 36
           },
           "ios": {
             "deploymentTarget": "16.4"
           }
         }
       ],
-      "./plugins/withZoomMeetingSDK.js"
+      "./plugins/withZoomMeetingSDK.js",
+      "./plugins/withGradleNodePath.js"
     ],
     "runtimeVersion": {
       "policy": "appVersion"
