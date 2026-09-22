@@ -1,32 +1,32 @@
-export type BukiAuthStateType = {
+export type MeetAppAuthStateType = {
   client: boolean;
   tutor: boolean;
   admin: boolean;
   currentRole: string;
 };
 
-export type BukiLoginParamsType = {
+export type MeetAppLoginParamsType = {
   phonePlain: string;
   password: string;
   phoneDefaultCountryCode: boolean;
 };
 
-export type BukiAuthCodeParamsType = {
+export type MeetAppAuthCodeParamsType = {
   phonePlain: string;
   phoneDefaultCountryCode: boolean;
 };
 
-export type BukiAuthCodeResultType = {
+export type MeetAppAuthCodeResultType = {
   clientId: number;
 };
 
-export type BukiLoginByCodeParamsType = {
+export type MeetAppLoginByCodeParamsType = {
   clientId: number;
   authCode: string;
 };
 
-export type BukiLoginResultType = {
-  auth: BukiAuthStateType;
+export type MeetAppLoginResultType = {
+  auth: MeetAppAuthStateType;
   data: unknown;
 };
 

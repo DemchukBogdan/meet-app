@@ -6,9 +6,9 @@ import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-nativ
 
 // constants
 import {
-  BUKI_FIELD_BG,
-  BUKI_GREEN,
-  BUKI_LABEL,
+  MEET_APP_FIELD_BG,
+  MEET_APP_GREEN,
+  MEET_APP_LABEL,
 } from '@/features/auth/constants';
 import {
   JOIN_AS_CLIENT_BUTTON,
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
   hint: {
     fontSize: 13,
     lineHeight: 18,
-    color: BUKI_LABEL,
+    color: MEET_APP_LABEL,
   },
   field: {
     position: 'relative',
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 25,
     borderRadius: 10,
-    backgroundColor: BUKI_FIELD_BG,
+    backgroundColor: MEET_APP_FIELD_BG,
   },
   fieldHeader: {
     position: 'absolute',
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     left: 25,
     fontSize: 12,
     lineHeight: 14,
-    color: BUKI_LABEL,
+    color: MEET_APP_LABEL,
   },
   fieldInput: {
     padding: 0,
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 25,
     borderRadius: 30,
-    backgroundColor: BUKI_GREEN,
+    backgroundColor: MEET_APP_GREEN,
     alignItems: 'center',
   },
   buttonLabel: {

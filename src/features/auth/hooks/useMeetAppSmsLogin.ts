@@ -3,9 +3,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 // api
 import {
-  loginBukiClientByCode,
-  requestBukiAuthCode,
-} from '../api/bukiAuthApi';
+  loginMeetAppClientByCode,
+  requestMeetAppAuthCode,
+} from '../api/meetAppAuthApi';
 
 // constants
 import {
@@ -18,12 +18,12 @@ import {
 } from '../constants';
 
 // errors
-import { BukiLoginError } from '../errors';
+import { MeetAppLoginError } from '../errors';
 
 // utils
 import { formatPhoneMask, getPhonePlain } from '../utils/getPhonePlain';
 
-type UseBukiSmsLoginParamsType = {
+type UseMeetAppSmsLoginParamsType = {
   isActive: boolean;
   onSuccess: VoidFunction;
 };
@@ -39,10 +39,10 @@ function formatResendWaitLabel(remainingMs: number): string {
   return `${SMS_RESEND_WAIT_PREFIX} ${totalSeconds} ${SMS_SECOND_LABEL}`;
 }
 
-export function useBukiSmsLogin({
+export function useMeetAppSmsLogin({
   isActive,
   onSuccess,
-}: UseBukiSmsLoginParamsType) {
+}: UseMeetAppSmsLoginParamsType) {
   const [phone, setPhone] = useState('');
   const [authCode, setAuthCode] = useState('');
   const [clientId, setClientId] = useState<number | null>(null);
@@ -119,7 +119,7 @@ export function useBukiSmsLogin({
   }, [isActive]);
 
   const handleAuthError = useCallback((error: unknown) => {
-    if (error instanceof BukiLoginError) {
+    if (error instanceof MeetAppLoginError) {
       if (error.retryAfterSeconds > 0) {
         setNowMs(Date.now());
         setResendAvailableAtMs(
@@ -169,7 +169,7 @@ export function useBukiSmsLogin({
     setErrorMessage(null);
 
     try {
-      const result = await requestBukiAuthCode({
+      const result = await requestMeetAppAuthCode({
         phonePlain,
         phoneDefaultCountryCode: true,
       });
@@ -198,7 +198,7 @@ export function useBukiSmsLogin({
     setErrorMessage(null);
 
     try {
-      await loginBukiClientByCode({
+      await loginMeetAppClientByCode({
         clientId,
         authCode,
       });

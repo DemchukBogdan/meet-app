@@ -5,7 +5,7 @@ import { useCallback, useMemo, type ReactNode } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
 // constants
-import { BUKI_GREEN, BUKI_LABEL } from '@/features/auth/constants';
+import { MEET_APP_GREEN, MEET_APP_LABEL } from '@/features/auth/constants';
 import {
   BALANCE_HEADER,
   BOTTOM_NAV_SHADOW,
@@ -49,7 +49,7 @@ type NavItemPropsType = {
 };
 
 function HomeIcon({ isActive }: { isActive: boolean }) {
-  const color = isActive ? BUKI_GREEN : BUKI_LABEL;
+  const color = isActive ? MEET_APP_GREEN : MEET_APP_LABEL;
   return (
     <View style={iconStyles.box}>
       <View style={[iconStyles.roof, { borderBottomColor: color }]} />
@@ -59,7 +59,7 @@ function HomeIcon({ isActive }: { isActive: boolean }) {
 }
 
 function ChatsIcon({ isActive }: { isActive: boolean }) {
-  const color = isActive ? BUKI_GREEN : BUKI_LABEL;
+  const color = isActive ? MEET_APP_GREEN : MEET_APP_LABEL;
   return (
     <View style={iconStyles.box}>
       <View style={[iconStyles.bubble, { borderColor: color }]} />
@@ -69,7 +69,7 @@ function ChatsIcon({ isActive }: { isActive: boolean }) {
 }
 
 function ProfileIcon({ isActive }: { isActive: boolean }) {
-  const color = isActive ? BUKI_GREEN : BUKI_LABEL;
+  const color = isActive ? MEET_APP_GREEN : MEET_APP_LABEL;
   return (
     <View style={iconStyles.box}>
       <View style={[iconStyles.head, { borderColor: color }]} />
@@ -79,7 +79,7 @@ function ProfileIcon({ isActive }: { isActive: boolean }) {
 }
 
 function CalendarIcon({ isActive }: { isActive: boolean }) {
-  const color = isActive ? BUKI_GREEN : BUKI_LABEL;
+  const color = isActive ? MEET_APP_GREEN : MEET_APP_LABEL;
   return (
     <View style={[iconStyles.calendar, { borderColor: color }]}>
       <View style={[iconStyles.calendarBar, { backgroundColor: color }]} />
@@ -88,7 +88,7 @@ function CalendarIcon({ isActive }: { isActive: boolean }) {
 }
 
 function MoreIcon({ isActive }: { isActive: boolean }) {
-  const color = isActive ? BUKI_GREEN : '#000';
+  const color = isActive ? MEET_APP_GREEN : '#000';
   return (
     <View style={iconStyles.hamburger}>
       <View style={[iconStyles.hamburgerBar, { backgroundColor: color }]} />
@@ -99,7 +99,7 @@ function MoreIcon({ isActive }: { isActive: boolean }) {
 }
 
 function NavItem({ title, isActive, onPress, icon }: NavItemPropsType) {
-  const titleColor = isActive ? '#000' : BUKI_LABEL;
+  const titleColor = isActive ? '#000' : MEET_APP_LABEL;
 
   return (
     <Pressable onPress={onPress} style={styles.navItem}>
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 30,
-    backgroundColor: BUKI_GREEN,
+    backgroundColor: MEET_APP_GREEN,
     alignItems: 'center',
   },
   replenishLabel: {
@@ -350,7 +350,7 @@ const styles = StyleSheet.create({
     width: '100%',
     fontSize: 12,
     lineHeight: 14,
-    color: BUKI_LABEL,
+    color: MEET_APP_LABEL,
   },
   navWrap: {
     backgroundColor: '#fff',
@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
   menuItemTitle: {
     fontSize: 16,
     lineHeight: 21,
-    color: BUKI_LABEL,
+    color: MEET_APP_LABEL,
   },
   menuItemActive: {
     color: '#000',

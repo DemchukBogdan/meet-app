@@ -4,8 +4,8 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 // constants
 import {
   AUTH_CODE_LENGTH,
-  BUKI_FIELD_BG,
-  BUKI_LABEL,
+  MEET_APP_FIELD_BG,
+  MEET_APP_LABEL,
   EMAIL_LABEL,
   PASSWORD_LABEL,
   PHONE_COUNTRY_PREFIX,
@@ -135,9 +135,9 @@ const styles = StyleSheet.create({
     minHeight: 59,
     borderRadius: 10,
     borderCurve: 'continuous',
-    backgroundColor: BUKI_FIELD_BG,
+    backgroundColor: MEET_APP_FIELD_BG,
     borderWidth: 1,
-    borderColor: BUKI_FIELD_BG,
+    borderColor: MEET_APP_FIELD_BG,
     paddingTop: 28,
     paddingBottom: 10,
     paddingLeft: 24,
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     left: 24,
     fontSize: 12,
     lineHeight: 14,
-    color: BUKI_LABEL,
+    color: MEET_APP_LABEL,
   },
   phoneRow: {
     flexDirection: 'row',

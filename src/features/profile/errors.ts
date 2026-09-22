@@ -1,6 +1,6 @@
-export class BukiProfileError extends Error {
+export class MeetAppProfileError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'BukiProfileError';
+    this.name = 'MeetAppProfileError';
   }
 }

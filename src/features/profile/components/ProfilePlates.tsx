@@ -6,9 +6,9 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 // constants
 import {
-  BUKI_FIELD_BG,
-  BUKI_GREEN,
-  BUKI_LABEL,
+  MEET_APP_FIELD_BG,
+  MEET_APP_GREEN,
+  MEET_APP_LABEL,
 } from '@/features/auth/constants';
 import {
   AVATAR_BG,
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     paddingRight: 44,
     borderRadius: 10,
-    backgroundColor: BUKI_FIELD_BG,
+    backgroundColor: MEET_APP_FIELD_BG,
   },
   fieldHeader: {
     position: 'absolute',
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     left: 25,
     fontSize: 12,
     lineHeight: 14,
-    color: BUKI_LABEL,
+    color: MEET_APP_LABEL,
   },
   fieldValue: {
     fontSize: 16,
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 65,
     borderRadius: 25,
-    backgroundColor: BUKI_GREEN,
+    backgroundColor: MEET_APP_GREEN,
   },
   replenishLabel: {
     fontSize: 18,

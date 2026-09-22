@@ -2,13 +2,13 @@
 import { useCallback, useEffect, useState } from 'react';
 
 // api
-import { getClientProfile } from '../api/bukiProfileApi';
+import { getClientProfile } from '../api/meetAppProfileApi';
 
 // constants
 import { PROFILE_LOAD_ERROR } from '../constants';
 
 // errors
-import { BukiProfileError } from '../errors';
+import { MeetAppProfileError } from '../errors';
 
 // types
 import type { ClientProfileType } from '../types';
@@ -33,7 +33,7 @@ export function useClientProfile({
       setProfile(nextProfile);
     } catch (error) {
       if (
-        error instanceof BukiProfileError &&
+        error instanceof MeetAppProfileError &&
         error.message === 'profile_unauthorized'
       ) {
         onUnauthorized();

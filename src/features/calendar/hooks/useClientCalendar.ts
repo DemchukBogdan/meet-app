@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 // api
-import { getClientCalendarWeek } from '../api/bukiCalendarApi';
+import { getClientCalendarWeek } from '../api/meetAppCalendarApi';
 
 // constants
 import { CALENDAR_LOAD_ERROR } from '../constants';

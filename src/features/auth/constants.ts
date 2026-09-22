@@ -1,7 +1,6 @@
-export const BUKI_LOGO_URI =
-  'https://bukischool.com.ua/img/logo-bukischool-by-buki_r.png';
-export const BUKI_SUPPORT_EMAIL = 'school@buki.com.ua';
-export const BUKI_TUTOR_LOGIN_URL = 'https://bukischool.com.ua/login';
+export const APP_WORDMARK = 'MeetApp';
+export const MEET_APP_SUPPORT_EMAIL = 'support@meetapp.example';
+export const MEET_APP_TUTOR_LOGIN_URL = 'https://meetapp.example/login';
 
 export const PHONE_COUNTRY_PREFIX = '+38';
 export const PHONE_MASK_PLACEHOLDER = 'ХХХ ХХХ-ХХ-ХХ';
@@ -35,7 +34,7 @@ export const HELP_TEXT =
 export const TUTOR_LOGIN_TITLE = 'Увійти в кабінет репетитора';
 export const GENERIC_LOGIN_ERROR = '* Помилка в телефоні або паролі';
 
-export const BUKI_LOGIN_ERROR_MESSAGES: Record<string, string> = {
+export const MEET_APP_LOGIN_ERROR_MESSAGES: Record<string, string> = {
   wrong_password: GENERIC_LOGIN_ERROR,
   no_client: '* Цей номер не зареєстрований як учень',
   client_not_found: '* Номер телефону не належить клієнту',
@@ -52,13 +51,13 @@ export const BUKI_LOGIN_ERROR_MESSAGES: Record<string, string> = {
     '* Забагато спроб входу. Спробуйте ще раз через 5 хвилин.',
 };
 
-export const BUKI_GREEN = '#66B314';
-export const BUKI_FIELD_BG = '#F3F3F3';
-export const BUKI_LABEL = '#ABACA9';
-export const BUKI_ERROR = '#D51C1C';
-export const BUKI_FLAG_BLUE = '#0057B7';
-export const BUKI_FLAG_YELLOW = '#FFD700';
-export const BUKI_DIVIDER = '#CCCCCC';
+export const MEET_APP_GREEN = '#2C6E9B';
+export const MEET_APP_FIELD_BG = '#F3F3F3';
+export const MEET_APP_LABEL = '#ABACA9';
+export const MEET_APP_ERROR = '#D51C1C';
+export const MEET_APP_FLAG_BLUE = '#0057B7';
+export const MEET_APP_FLAG_YELLOW = '#FFD700';
+export const MEET_APP_DIVIDER = '#CCCCCC';
 export const CARD_SHADOW = '0 0 12px 5px rgba(0, 0, 0, 0.1)';
 export const HEADER_SHADOW = '0 0 12px 0 rgba(0, 0, 0, 0.22)';
 export const OUTLINE_SHADOW = '0 0 12px 2px rgba(0, 0, 0, 0.12)';

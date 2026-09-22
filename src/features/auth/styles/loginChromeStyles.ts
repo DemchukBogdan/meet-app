@@ -5,7 +5,7 @@ import Constants from 'expo-constants';
 
 // constants
 import {
-  BUKI_GREEN,
+  MEET_APP_GREEN,
   CARD_SHADOW,
   HEADER_SHADOW,
   OUTLINE_SHADOW,
@@ -33,9 +33,11 @@ export const loginChromeStyles = StyleSheet.create({
     boxShadow: HEADER_SHADOW,
     zIndex: 2,
   },
-  logo: {
-    width: 121,
-    height: 31,
+  wordmark: {
+    fontSize: 22,
+    lineHeight: 28,
+    fontWeight: '800',
+    color: '#1A1A1A',
   },
   card: {
     borderRadius: 20,
@@ -62,7 +64,7 @@ export const loginChromeStyles = StyleSheet.create({
     width: 240,
     height: 52,
     borderRadius: 40,
-    backgroundColor: BUKI_GREEN,
+    backgroundColor: MEET_APP_GREEN,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 32,
@@ -96,6 +98,6 @@ export const loginChromeStyles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 24,
     fontWeight: '800',
-    color: BUKI_GREEN,
+    color: MEET_APP_GREEN,
   },
 });

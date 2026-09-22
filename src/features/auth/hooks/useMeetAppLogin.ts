@@ -2,19 +2,19 @@
 import { useCallback, useMemo, useState } from 'react';
 
 // api
-import { loginBukiClient } from '../api/bukiAuthApi';
+import { loginMeetAppClient } from '../api/meetAppAuthApi';
 
 // errors
-import { BukiLoginError } from '../errors';
+import { MeetAppLoginError } from '../errors';
 
 // utils
 import { formatPhoneMask, getPhonePlain } from '../utils/getPhonePlain';
 
-type UseBukiLoginParamsType = {
+type UseMeetAppLoginParamsType = {
   onSuccess: VoidFunction;
 };
 
-export function useBukiLogin({ onSuccess }: UseBukiLoginParamsType) {
+export function useMeetAppLogin({ onSuccess }: UseMeetAppLoginParamsType) {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -50,14 +50,14 @@ export function useBukiLogin({ onSuccess }: UseBukiLoginParamsType) {
     setErrorMessage(null);
 
     try {
-      await loginBukiClient({
+      await loginMeetAppClient({
         phonePlain,
         password,
         phoneDefaultCountryCode: true,
       });
       onSuccess();
     } catch (error) {
-      if (error instanceof BukiLoginError) {
+      if (error instanceof MeetAppLoginError) {
         setErrorMessage(error.message);
         return;
       }

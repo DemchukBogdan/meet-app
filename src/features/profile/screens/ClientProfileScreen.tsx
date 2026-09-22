@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 
 // constants
-import { BUKI_GREEN } from '@/features/auth/constants';
+import { MEET_APP_GREEN } from '@/features/auth/constants';
 import { PROFILE_PAGE_TITLE, PROFILE_RETRY_TITLE } from '../constants';
 
 // features
@@ -43,7 +43,7 @@ export function ClientProfileContent({
     if (isLoading) {
       return (
         <View style={styles.stateWrap}>
-          <ActivityIndicator color={BUKI_GREEN} />
+          <ActivityIndicator color={MEET_APP_GREEN} />
         </View>
       );
     }
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 25,
-    backgroundColor: BUKI_GREEN,
+    backgroundColor: MEET_APP_GREEN,
   },
   retryLabel: {
     fontSize: 16,

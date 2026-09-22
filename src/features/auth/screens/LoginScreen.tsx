@@ -4,7 +4,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 // react-native
 import {
   Alert,
-  Image,
   Linking,
   Pressable,
   ScrollView,
@@ -18,11 +17,11 @@ import { StatusBar } from 'expo-status-bar';
 
 // constants
 import {
-  BUKI_ERROR,
-  BUKI_GREEN,
-  BUKI_LOGO_URI,
-  BUKI_SUPPORT_EMAIL,
-  BUKI_TUTOR_LOGIN_URL,
+  APP_WORDMARK,
+  MEET_APP_ERROR,
+  MEET_APP_GREEN,
+  MEET_APP_SUPPORT_EMAIL,
+  MEET_APP_TUTOR_LOGIN_URL,
   HELP_TEXT,
   LOGIN_TITLE,
   SUBMIT_TITLE,
@@ -31,7 +30,7 @@ import {
 
 // hooks
 import { useKeyboardBottomInset } from '@/shared/hooks/useKeyboardBottomInset';
-import { useBukiLogin } from '../hooks/useBukiLogin';
+import { useMeetAppLogin } from '../hooks/useMeetAppLogin';
 
 // components
 import { ForgotPasswordCard } from '../components/ForgotPasswordCard';
@@ -57,7 +56,7 @@ export function LoginScreen({ onSuccess }: LoginScreenPropsType) {
     handleChangePassword,
     handleTogglePasswordVisibility,
     handleSubmit,
-  } = useBukiLogin({ onSuccess });
+  } = useMeetAppLogin({ onSuccess });
   const [recoveryMode, setRecoveryMode] = useState<RecoveryModeType | null>(
     null
   );
@@ -104,11 +103,11 @@ export function LoginScreen({ onSuccess }: LoginScreenPropsType) {
   }, [onSuccess]);
 
   const handleSupportEmail = useCallback(() => {
-    Linking.openURL(`mailto:${BUKI_SUPPORT_EMAIL}`);
+    Linking.openURL(`mailto:${MEET_APP_SUPPORT_EMAIL}`);
   }, []);
 
   const handleTutorLogin = useCallback(() => {
-    Linking.openURL(BUKI_TUTOR_LOGIN_URL);
+    Linking.openURL(MEET_APP_TUTOR_LOGIN_URL);
   }, []);
 
   const scrollViewRef = useRef<ScrollView>(null);
@@ -130,12 +129,7 @@ export function LoginScreen({ onSuccess }: LoginScreenPropsType) {
   return (
     <View style={styles.root}>
       <View style={loginChromeStyles.header}>
-        <Image
-          source={{ uri: BUKI_LOGO_URI }}
-          style={loginChromeStyles.logo}
-          resizeMode="contain"
-          accessibilityLabel="BUKI School"
-        />
+        <Text style={loginChromeStyles.wordmark}>{APP_WORDMARK}</Text>
       </View>
       <ScrollView
         ref={scrollViewRef}
@@ -180,7 +174,7 @@ export function LoginScreen({ onSuccess }: LoginScreenPropsType) {
         <Text style={styles.helpText}>
           {HELP_TEXT}{' '}
           <Text style={styles.helpEmail} onPress={handleSupportEmail}>
-            {BUKI_SUPPORT_EMAIL}
+            {MEET_APP_SUPPORT_EMAIL}
           </Text>
         </Text>
         <Pressable onPress={handleTutorLogin}>
@@ -215,7 +209,7 @@ const styles = StyleSheet.create({
   error: {
     fontSize: 12,
     lineHeight: 16,
-    color: BUKI_ERROR,
+    color: MEET_APP_ERROR,
   },
   submitWrap: {
     marginTop: 5,
@@ -232,14 +226,14 @@ const styles = StyleSheet.create({
     textAlign: 'left',
   },
   helpEmail: {
-    color: BUKI_GREEN,
+    color: MEET_APP_GREEN,
   },
   tutorLink: {
     marginTop: 25,
     paddingTop: 30,
     fontSize: 18,
     lineHeight: 22,
-    color: BUKI_GREEN,
+    color: MEET_APP_GREEN,
     textAlign: 'center',
   },
 });

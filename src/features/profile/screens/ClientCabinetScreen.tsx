@@ -2,16 +2,16 @@
 import { useCallback, useMemo, useState } from 'react';
 
 // react-native
-import { Image, StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 // libraries
 import { StatusBar } from 'expo-status-bar';
 
 // constants
-import { BUKI_LOGO_URI } from '@/features/auth/constants';
+import { APP_WORDMARK } from '@/features/auth/constants';
 
 // api
-import { logoutBukiClient } from '@/features/auth/api/bukiAuthApi';
+import { logoutMeetAppClient } from '@/features/auth/api/meetAppAuthApi';
 
 // features
 import { ClientCalendarScreen } from '@/features/calendar';
@@ -58,7 +58,7 @@ function CabinetBody({
 
   const handleLogout = useCallback(async () => {
     setIsMoreOpen(false);
-    await logoutBukiClient();
+    await logoutMeetAppClient();
     onLogout();
   }, [onLogout]);
 
@@ -121,12 +121,7 @@ function CabinetBody({
   return (
     <View style={styles.root}>
       <View style={loginChromeStyles.header}>
-        <Image
-          source={{ uri: BUKI_LOGO_URI }}
-          style={loginChromeStyles.logo}
-          resizeMode="contain"
-          accessibilityLabel="BUKI School"
-        />
+        <Text style={loginChromeStyles.wordmark}>{APP_WORDMARK}</Text>
       </View>
       {balanceBarView}
       {tabContentView}

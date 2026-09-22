@@ -1,6 +1,6 @@
-export class BukiCalendarError extends Error {
+export class MeetAppCalendarError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'BukiCalendarError';
+    this.name = 'MeetAppCalendarError';
   }
 }

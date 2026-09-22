@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 
 // constants
-import { BUKI_GREEN, BUKI_LABEL } from '@/features/auth/constants';
+import { MEET_APP_GREEN, MEET_APP_LABEL } from '@/features/auth/constants';
 import {
   CALENDAR_PAGE_TITLE,
   CALENDAR_RETRY_TITLE,
@@ -276,7 +276,7 @@ function CalendarBody({ joinActions }: CalendarBodyPropsType) {
   if (isLoading) {
     return (
       <View style={styles.stateWrap}>
-        <ActivityIndicator color={BUKI_GREEN} />
+        <ActivityIndicator color={MEET_APP_GREEN} />
       </View>
     );
   }
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     height: 10,
     borderTopWidth: 2,
     borderRightWidth: 2,
-    borderColor: BUKI_GREEN,
+    borderColor: MEET_APP_GREEN,
     transform: [{ rotate: '45deg' }],
   },
   arrowPrev: {
@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
   dayLetter: {
     fontSize: 12,
     lineHeight: 14,
-    color: BUKI_LABEL,
+    color: MEET_APP_LABEL,
     textTransform: 'lowercase',
   },
   dayNumber: {
@@ -425,7 +425,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   daySelectedText: {
-    color: BUKI_GREEN,
+    color: MEET_APP_GREEN,
   },
   lessonCard: {
     flexDirection: 'row',
@@ -441,7 +441,7 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: BUKI_GREEN,
+    backgroundColor: MEET_APP_GREEN,
   },
   lessonCopy: {
     flex: 1,
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 14,
     lineHeight: 18,
-    color: BUKI_LABEL,
+    color: MEET_APP_LABEL,
   },
   empty: {
     fontSize: 14,
@@ -477,7 +477,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 19,
     fontWeight: '600',
-    color: BUKI_GREEN,
+    color: MEET_APP_GREEN,
     textDecorationLine: 'underline',
     marginBottom: 4,
   },
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 25,
-    backgroundColor: BUKI_GREEN,
+    backgroundColor: MEET_APP_GREEN,
   },
   retryLabel: {
     fontSize: 16,
@@ -551,13 +551,13 @@ const styles = StyleSheet.create({
   sheetTime: {
     fontSize: 14,
     lineHeight: 18,
-    color: BUKI_LABEL,
+    color: MEET_APP_LABEL,
     marginBottom: 8,
   },
   hint: {
     fontSize: 13,
     lineHeight: 18,
-    color: BUKI_LABEL,
+    color: MEET_APP_LABEL,
     textAlign: 'center',
   },
   joinButton: {
@@ -565,11 +565,11 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 25,
     borderRadius: 30,
-    backgroundColor: BUKI_GREEN,
+    backgroundColor: MEET_APP_GREEN,
     alignItems: 'center',
   },
   joinButtonDisabled: {
-    backgroundColor: BUKI_LABEL,
+    backgroundColor: MEET_APP_LABEL,
   },
   joinLabel: {
     fontSize: 18,
@@ -582,7 +582,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 18,
     fontWeight: '600',
-    color: BUKI_GREEN,
+    color: MEET_APP_GREEN,
     textAlign: 'center',
   },
 });

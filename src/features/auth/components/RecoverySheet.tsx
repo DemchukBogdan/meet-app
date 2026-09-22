@@ -12,8 +12,8 @@ import {
 
 // constants
 import {
-  BUKI_ERROR,
-  BUKI_GREEN,
+  MEET_APP_ERROR,
+  MEET_APP_GREEN,
   CARD_SHADOW,
   EMAIL_SHEET_TITLE,
   EMAIL_SUBMIT_TITLE,
@@ -26,7 +26,7 @@ import {
 
 // hooks
 import { useKeyboardBottomInset } from '@/shared/hooks/useKeyboardBottomInset';
-import { useBukiSmsLogin } from '../hooks/useBukiSmsLogin';
+import { useMeetAppSmsLogin } from '../hooks/useMeetAppSmsLogin';
 
 // components
 import { CloseIcon } from './LoginExtras';
@@ -81,7 +81,7 @@ export function RecoverySheet({
     handleChangeAuthCode,
     handleRequestCode,
     handleSubmit,
-  } = useBukiSmsLogin({
+  } = useMeetAppSmsLogin({
     isActive: isSmsMode,
     onSuccess,
   });
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontSize: 12,
     lineHeight: 16,
-    color: BUKI_ERROR,
+    color: MEET_APP_ERROR,
   },
   cooldown: {
     marginTop: -12,
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontSize: 14,
     lineHeight: 18,
-    color: BUKI_GREEN,
+    color: MEET_APP_GREEN,
     textAlign: 'center',
   },
 });

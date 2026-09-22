@@ -3,10 +3,10 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 // constants
 import {
-  BUKI_DIVIDER,
-  BUKI_FLAG_BLUE,
-  BUKI_FLAG_YELLOW,
-  BUKI_LABEL,
+  MEET_APP_DIVIDER,
+  MEET_APP_FLAG_BLUE,
+  MEET_APP_FLAG_YELLOW,
+  MEET_APP_LABEL,
   GOOGLE_LOGIN_TITLE,
   GOOGLE_SHADOW,
   OR_DIVIDER_LABEL,
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: BUKI_DIVIDER,
+    backgroundColor: MEET_APP_DIVIDER,
   },
   dividerLabel: {
     paddingHorizontal: 15,
@@ -111,11 +111,11 @@ const styles = StyleSheet.create({
   },
   flagBlue: {
     flex: 1,
-    backgroundColor: BUKI_FLAG_BLUE,
+    backgroundColor: MEET_APP_FLAG_BLUE,
   },
   flagYellow: {
     flex: 1,
-    backgroundColor: BUKI_FLAG_YELLOW,
+    backgroundColor: MEET_APP_FLAG_YELLOW,
   },
   flagChevron: {
     width: 0,
@@ -138,14 +138,14 @@ const styles = StyleSheet.create({
     height: 10,
     borderRadius: 8,
     borderWidth: 1.5,
-    borderColor: BUKI_LABEL,
+    borderColor: MEET_APP_LABEL,
   },
   eyePupil: {
     position: 'absolute',
     width: 5,
     height: 5,
     borderRadius: 3,
-    backgroundColor: BUKI_LABEL,
+    backgroundColor: MEET_APP_LABEL,
   },
   closeWrap: {
     width: 18,
