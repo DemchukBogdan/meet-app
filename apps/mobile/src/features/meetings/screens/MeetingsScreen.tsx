@@ -13,6 +13,8 @@ import { AppButton } from '../components/AppButton';
 import { MeetingCard } from '../components/MeetingCard';
 import { meetingsPalette } from '../styles/variant-styles';
 
+import type { MeetingsListViewModelType } from '@meet/meetings';
+
 type MeetingsScreenProps = {
   onCreate: () => void;
   onOpen: (meetingId: string) => void;
@@ -49,32 +51,11 @@ export function MeetingsScreen({ onCreate, onOpen }: MeetingsScreenProps) {
         ))}
       </View>
       <AppButton onPress={onCreate}>{viewModel.createLabel}</AppButton>
-      {viewModel.isLoading ? (
-        <View style={styles.state}>
-          <ActivityIndicator />
-          <Text>{viewModel.loadingLabel}</Text>
-        </View>
-      ) : null}
-      {viewModel.isError ? (
-        <View style={styles.state}>
-          <Text>{viewModel.errorLabel}</Text>
-          <AppButton intent="secondary" onPress={viewModel.handleRetry}>
-            {viewModel.retryLabel}
-          </AppButton>
-        </View>
-      ) : null}
-      {viewModel.isEmpty ? (
-        <Text style={styles.state}>{viewModel.emptyLabel}</Text>
-      ) : null}
-      <FlatList
-        data={viewModel.meetings}
-        keyExtractor={(meeting) => meeting.id}
-        contentContainerStyle={styles.list}
-        renderItem={({ item }) => (
-          <MeetingCard meeting={item} onPress={onOpen} />
-        )}
-      />
-      {viewModel.showPagination ? (
+      <MeetingsBody viewModel={viewModel} onOpen={onOpen} />
+      {viewModel.showPagination &&
+      !viewModel.isLoading &&
+      !viewModel.isError &&
+      !viewModel.isEmpty ? (
         <View style={styles.pagination}>
           <AppButton
             intent="secondary"
@@ -96,6 +77,48 @@ export function MeetingsScreen({ onCreate, onOpen }: MeetingsScreenProps) {
         </View>
       ) : null}
     </View>
+  );
+}
+
+function MeetingsBody({
+  viewModel,
+  onOpen,
+}: {
+  viewModel: MeetingsListViewModelType;
+  onOpen: (meetingId: string) => void;
+}) {
+  if (viewModel.isLoading) {
+    return (
+      <View style={styles.state}>
+        <ActivityIndicator />
+        <Text>{viewModel.loadingLabel}</Text>
+      </View>
+    );
+  }
+
+  if (viewModel.isError) {
+    return (
+      <View style={styles.state}>
+        <Text>{viewModel.errorLabel}</Text>
+        <AppButton intent="secondary" onPress={viewModel.handleRetry}>
+          {viewModel.retryLabel}
+        </AppButton>
+      </View>
+    );
+  }
+
+  if (viewModel.isEmpty) {
+    return <Text style={styles.state}>{viewModel.emptyLabel}</Text>;
+  }
+
+  return (
+    <FlatList
+      style={styles.list}
+      data={viewModel.meetings}
+      keyExtractor={(meeting) => meeting.id}
+      contentContainerStyle={styles.listContent}
+      renderItem={({ item }) => <MeetingCard meeting={item} onPress={onOpen} />}
+    />
   );
 }
 
@@ -137,6 +160,9 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   list: {
+    flex: 1,
+  },
+  listContent: {
     gap: 12,
     paddingBottom: 24,
   },

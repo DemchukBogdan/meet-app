@@ -1,5 +1,5 @@
 // react
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 // model
 import { meetAppAuthRepository } from '../model/meetAppAuthRepository';
@@ -20,6 +20,7 @@ export function useMeetAppLogin({ onSuccess }: UseMeetAppLoginParamsType) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const submitLock = useRef(false);
 
   const phonePlain = useMemo(() => getPhonePlain(phone), [phone]);
   const isSubmitDisabled = useMemo(
@@ -42,10 +43,11 @@ export function useMeetAppLogin({ onSuccess }: UseMeetAppLoginParamsType) {
   }, []);
 
   const handleSubmit = useCallback(async () => {
-    if (isSubmitDisabled) {
+    if (submitLock.current || isSubmitDisabled) {
       return;
     }
 
+    submitLock.current = true;
     setIsSubmitting(true);
     setErrorMessage(null);
 
@@ -56,7 +58,8 @@ export function useMeetAppLogin({ onSuccess }: UseMeetAppLoginParamsType) {
         phoneDefaultCountryCode: true,
       });
       onSuccess();
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error(error);
       if (error instanceof MeetAppLoginError) {
         setErrorMessage(error.message);
         return;
@@ -66,6 +69,7 @@ export function useMeetAppLogin({ onSuccess }: UseMeetAppLoginParamsType) {
         '* Не вдалося увійти. Перевірте інтернет і спробуйте ще раз',
       );
     } finally {
+      submitLock.current = false;
       setIsSubmitting(false);
     }
   }, [isSubmitDisabled, onSuccess, password, phonePlain]);

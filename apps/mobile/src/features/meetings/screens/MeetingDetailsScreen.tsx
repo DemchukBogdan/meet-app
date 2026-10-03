@@ -41,6 +41,9 @@ export function MeetingDetailsScreen({
       <View style={styles.screen}>
         <ActivityIndicator />
         <Text>{viewModel.loadingLabel}</Text>
+        <AppButton intent="secondary" onPress={onBack}>
+          {viewModel.backLabel}
+        </AppButton>
       </View>
     );
   }

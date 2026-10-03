@@ -17,6 +17,15 @@ import { useMeetAppLogin } from './useMeetAppLogin';
 // types
 import type { LoginScreenPropsType, RecoveryModeType } from '../types';
 
+const ENABLED_SUBMIT_OPACITY = 1;
+const DISABLED_SUBMIT_OPACITY = 0.6;
+
+function openExternalUrl(url: string): void {
+  void Linking.openURL(url).catch((error: unknown) => {
+    console.error(error);
+  });
+}
+
 export function useLoginScreen({ onSuccess }: LoginScreenPropsType) {
   const login = useMeetAppLogin({ onSuccess });
   const [recoveryMode, setRecoveryMode] = useState<RecoveryModeType | null>(
@@ -27,7 +36,9 @@ export function useLoginScreen({ onSuccess }: LoginScreenPropsType) {
     () => (login.isSubmitting ? '...' : SUBMIT_TITLE),
     [login.isSubmitting],
   );
-  const submitOpacity = Number(!login.isSubmitDisabled) * 0.4 + 0.6;
+  const submitOpacity = login.isSubmitDisabled
+    ? DISABLED_SUBMIT_OPACITY
+    : ENABLED_SUBMIT_OPACITY;
 
   const handleGooglePress = useCallback(() => {
     Alert.alert(
@@ -54,11 +65,11 @@ export function useLoginScreen({ onSuccess }: LoginScreenPropsType) {
   }, [onSuccess]);
 
   const handleSupportEmail = useCallback(() => {
-    void Linking.openURL(`mailto:${MEET_APP_SUPPORT_EMAIL}`);
+    openExternalUrl(`mailto:${MEET_APP_SUPPORT_EMAIL}`);
   }, []);
 
   const handleTutorLogin = useCallback(() => {
-    void Linking.openURL(MEET_APP_TUTOR_LOGIN_URL);
+    openExternalUrl(MEET_APP_TUTOR_LOGIN_URL);
   }, []);
 
   return {

@@ -1,5 +1,5 @@
 // react
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 // model
 import { clientCalendarRepository } from '../model/clientCalendarRepository';
@@ -18,20 +18,34 @@ export function useClientCalendar() {
     useState<CalendarLessonType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const requestIdRef = useRef(0);
 
   const loadWeek = useCallback(async (nextPage: number) => {
+    const requestId = requestIdRef.current + 1;
+    requestIdRef.current = requestId;
     setIsLoading(true);
     setErrorMessage(null);
 
     try {
       const nextWeek = await clientCalendarRepository.getWeek(nextPage);
+      if (requestIdRef.current !== requestId) {
+        return;
+      }
+
       setWeek(nextWeek);
       const today = nextWeek.days.find((day) => day.isToday);
       setSelectedDayKey(today?.key ?? nextWeek.days[0]?.key ?? null);
-    } catch {
+    } catch (error: unknown) {
+      console.error(error);
+      if (requestIdRef.current !== requestId) {
+        return;
+      }
+
       setErrorMessage(CALENDAR_LOAD_ERROR);
     } finally {
-      setIsLoading(false);
+      if (requestIdRef.current === requestId) {
+        setIsLoading(false);
+      }
     }
   }, []);
 
