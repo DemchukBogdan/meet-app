@@ -1,8 +1,8 @@
 // react
 import { useCallback, useMemo, useState } from 'react';
 
-// api
-import { loginMeetAppClient } from '../api/meetAppAuthApi';
+// model
+import { meetAppAuthRepository } from '../model/meetAppAuthRepository';
 
 // errors
 import { MeetAppLoginError } from '../errors';
@@ -50,7 +50,7 @@ export function useMeetAppLogin({ onSuccess }: UseMeetAppLoginParamsType) {
     setErrorMessage(null);
 
     try {
-      await loginMeetAppClient({
+      await meetAppAuthRepository.login({
         phonePlain,
         password,
         phoneDefaultCountryCode: true,

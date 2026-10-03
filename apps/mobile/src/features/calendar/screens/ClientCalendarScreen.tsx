@@ -1,11 +1,9 @@
 // react
-import { useCallback, useMemo, useState, type ReactNode } from 'react';
+import { useMemo, type ReactNode } from 'react';
 
 // react-native
 import {
   ActivityIndicator,
-  Alert,
-  Linking,
   Modal,
   Pressable,
   ScrollView,
@@ -23,11 +21,6 @@ import {
   COLORS_TITLE,
   EMPTY_DAY_TITLE,
   EMPTY_WEEK_TITLE,
-  JWT_MISSING_MESSAGE,
-  JWT_MISSING_TITLE,
-  JOIN_HINT,
-  JOIN_LESSON_TITLE,
-  JOINING_LESSON_TITLE,
   OPEN_ZOOM_APP_TITLE,
   PAY_LESSON_TITLE,
   WEEK_SHADOW,
@@ -36,24 +29,20 @@ import {
 // hooks
 import { useClientCalendar } from '../hooks/useClientCalendar';
 import { useJoinCalendarLesson } from '../hooks/useJoinCalendarLesson';
+import { useLessonJoinSheet } from '../hooks/useLessonJoinSheet';
 
 // utils
-import { isJoinWindowOpen, toZoomAppLink } from '../utils/formatCalendar';
+import { padTimePart } from '../utils/formatCalendar';
 
 // types
 import type {
+  CalendarJoinActionsType,
   CalendarLessonType,
   ClientCalendarScreenPropsType,
 } from '../types';
 
-type JoinActionsType = {
-  isJoining: boolean;
-  handleJoinLesson: (lessonLink: string) => Promise<void>;
-  handleOpenZoomApp: (lessonLink: string) => Promise<void>;
-};
-
 type CalendarBodyPropsType = {
-  joinActions: JoinActionsType | null;
+  joinActions: CalendarJoinActionsType | null;
 };
 
 function ZoomJoinBridge({
@@ -61,7 +50,7 @@ function ZoomJoinBridge({
   children,
 }: {
   studentName: string;
-  children: (joinActions: JoinActionsType) => ReactNode;
+  children: (joinActions: CalendarJoinActionsType) => ReactNode;
 }) {
   const joinActions = useJoinCalendarLesson({
     studentName,
@@ -79,55 +68,20 @@ function LessonJoinSheet({
 }: {
   lesson: CalendarLessonType;
   serverNow: Date;
-  joinActions: JoinActionsType | null;
+  joinActions: CalendarJoinActionsType | null;
   onClose: VoidFunction;
 }) {
-  const isWindowOpen = isJoinWindowOpen({
-    startAt: lesson.startAt,
-    endAt: lesson.endAt,
-    now: serverNow,
-  });
-  const isJoinAvailable = Boolean(
-    lesson.canJoinByStatus && lesson.lessonLink && isWindowOpen,
-  );
-  const joinOpacity =
-    Number(isJoinAvailable && !joinActions?.isJoining) * 0.4 + 0.6;
-  const joinTitle = joinActions?.isJoining
-    ? JOINING_LESSON_TITLE
-    : JOIN_LESSON_TITLE;
-  const handleJoinPress = useCallback(() => {
-    if (!isJoinAvailable) {
-      return;
-    }
-
-    if (!joinActions) {
-      Alert.alert(JWT_MISSING_TITLE, JWT_MISSING_MESSAGE);
-      return;
-    }
-
-    void joinActions.handleJoinLesson(lesson.lessonLink);
-  }, [isJoinAvailable, joinActions, lesson.lessonLink]);
-  const handleOpenAppPress = useCallback(() => {
-    if (!lesson.lessonLink) {
-      return;
-    }
-
-    if (joinActions) {
-      void joinActions.handleOpenZoomApp(lesson.lessonLink);
-      return;
-    }
-
-    void Linking.openURL(toZoomAppLink(lesson.lessonLink));
-  }, [joinActions, lesson.lessonLink]);
-  const hintView = useMemo(() => {
-    if (isWindowOpen || !lesson.canJoinByStatus) {
-      return null;
-    }
-
-    return <Text style={styles.hint}>{JOIN_HINT}</Text>;
-  }, [isWindowOpen, lesson.canJoinByStatus]);
+  const {
+    actionKind,
+    isJoinAvailable,
+    joinOpacity,
+    joinTitle,
+    joinHint,
+    handleJoinPress,
+    handleOpenAppPress,
+  } = useLessonJoinSheet({ lesson, serverNow, joinActions });
   const actionView = useMemo(() => {
-    if (lesson.needsPayment) {
+    if (actionKind === 'pay') {
       return (
         <View style={[styles.joinButton, styles.joinButtonDisabled]}>
           <Text style={styles.joinLabel}>{PAY_LESSON_TITLE}</Text>
@@ -137,7 +91,7 @@ function LessonJoinSheet({
 
     return (
       <>
-        {hintView}
+        {joinHint ? <Text style={styles.hint}>{joinHint}</Text> : null}
         <Pressable
           disabled={!isJoinAvailable}
           onPress={handleJoinPress}
@@ -153,13 +107,13 @@ function LessonJoinSheet({
       </>
     );
   }, [
+    actionKind,
     handleJoinPress,
     handleOpenAppPress,
-    hintView,
     isJoinAvailable,
+    joinHint,
     joinOpacity,
     joinTitle,
-    lesson.needsPayment,
   ]);
 
   return (
@@ -189,14 +143,11 @@ function CalendarBody({ joinActions }: CalendarBodyPropsType) {
     handlePrevWeek,
     handleNextWeek,
     handleSelectDay,
+    selectedLesson,
+    handleOpenLesson,
+    handleCloseLesson,
     handleRetry,
   } = useClientCalendar();
-  const [selectedLesson, setSelectedLesson] =
-    useState<CalendarLessonType | null>(null);
-
-  const handleCloseLesson = useCallback(() => {
-    setSelectedLesson(null);
-  }, []);
 
   const daysView = useMemo(() => {
     if (!week) {
@@ -222,7 +173,7 @@ function CalendarBody({ joinActions }: CalendarBodyPropsType) {
               <Text
                 style={[styles.dayNumber, isSelected && styles.daySelectedText]}
               >
-                {padDay(day.day)}
+                {padTimePart(day.day)}
               </Text>
             </Pressable>
           );
@@ -247,7 +198,9 @@ function CalendarBody({ joinActions }: CalendarBodyPropsType) {
     return dayLessons.map((lesson) => (
       <Pressable
         key={lesson.id}
-        onPress={() => setSelectedLesson(lesson)}
+        onPress={() => {
+          handleOpenLesson(lesson);
+        }}
         style={styles.lessonCard}
       >
         <View style={styles.lessonDot} />
@@ -262,7 +215,7 @@ function CalendarBody({ joinActions }: CalendarBodyPropsType) {
         </View>
       </Pressable>
     ));
-  }, [dayLessons, week]);
+  }, [dayLessons, handleOpenLesson, week]);
 
   const legendView = useMemo(
     () => (
@@ -333,10 +286,6 @@ function CalendarBody({ joinActions }: CalendarBodyPropsType) {
       ) : null}
     </View>
   );
-}
-
-function padDay(day: number): string {
-  return String(day).padStart(2, '0');
 }
 
 export function ClientCalendarScreen({

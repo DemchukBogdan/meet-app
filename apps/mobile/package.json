@@ -17,6 +17,7 @@
     "@meet/api": "workspace:*",
     "@meet/i18n": "workspace:*",
     "@meet/join": "workspace:*",
+    "@meet/meetings": "workspace:*",
     "@meet/mocks": "workspace:*",
     "@meet/schemas": "workspace:*",
     "@meet/ui": "workspace:*",

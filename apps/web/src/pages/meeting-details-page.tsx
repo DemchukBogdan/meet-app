@@ -1,73 +1,45 @@
 import { Button, Card } from '@heroui/react';
-import { useGetMeetingQuery, useRsvpMutation } from '@meet/api';
-import { formatDateTime, getActiveLanguage, rsvpStatusKey } from '@meet/i18n';
-import { meetingCardVariants, buttonVariants } from '@meet/ui';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useMeetingDetailsViewModel } from '@meet/meetings';
+import { buttonVariants, meetingCardVariants } from '@meet/ui';
+import { ArrowLeft, Check, Clock, Timer, Users, Video, X } from 'lucide-react';
+import { useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { AppShell } from '../components/app-shell';
+import { usePageTitle } from '../components/app-shell';
 import { QueryState } from '../components/query-state';
 import { StatusBadge } from '../components/status-badge';
 import { useJoinService } from '../join/join-service-context';
 
-import type { RsvpInput } from '@meet/schemas';
-
 export function MeetingDetailsPage() {
-  const { meetingId } = useParams();
-  const { t } = useTranslation();
+  const { meetingId = '' } = useParams();
   const navigate = useNavigate();
   const joinService = useJoinService();
-  const query = useGetMeetingQuery(meetingId ?? '', { skip: !meetingId });
-  const [rsvp, rsvpState] = useRsvpMutation();
-  const [rsvpFailed, setRsvpFailed] = useState(false);
-  const [isJoining, setIsJoining] = useState(false);
-  const [joinFailed, setJoinFailed] = useState(false);
-  const meeting = query.data;
+  const joinMeeting = useCallback(
+    (id: string) => joinService.join(id),
+    [joinService],
+  );
+  const viewModel = useMeetingDetailsViewModel({
+    meetingId,
+    joinMeeting,
+  });
+  usePageTitle(viewModel.title);
+  const meeting = viewModel.meeting;
   const slots = meetingCardVariants({
     status: meeting?.status ?? 'scheduled',
     interactive: false,
   });
 
-  const handleRsvp = (status: RsvpInput['status']) => {
-    if (!meetingId) {
-      return;
-    }
-
-    setRsvpFailed(false);
-    void rsvp({ id: meetingId, body: { status } })
-      .unwrap()
-      .catch(() => {
-        setRsvpFailed(true);
-      });
-  };
-
-  const handleJoin = () => {
-    if (!meetingId) {
-      return;
-    }
-
-    setJoinFailed(false);
-    setIsJoining(true);
-    void joinService
-      .join(meetingId)
-      .catch(() => {
-        setJoinFailed(true);
-      })
-      .finally(() => {
-        setIsJoining(false);
-      });
-  };
-
   return (
-    <AppShell title={t('meetings.details.title')}>
+    <>
       <QueryState
-        isLoading={query.isLoading}
-        isError={query.isError || !meetingId}
+        isLoading={viewModel.isLoading}
+        isError={viewModel.isError}
         isEmpty={!meeting}
-        onRetry={() => {
-          void query.refetch();
-        }}
+        loadingLabel={viewModel.loadingLabel}
+        errorLabel={viewModel.errorLabel}
+        emptyLabel={viewModel.notFoundLabel}
+        retryLabel={viewModel.retryLabel}
+        onRetry={viewModel.handleRetry}
       >
         {meeting ? (
           <Card className={slots.base()}>
@@ -76,57 +48,55 @@ export function MeetingDetailsPage() {
               <StatusBadge status={meeting.status} />
             </Card.Header>
             <Card.Content className="flex flex-col gap-4">
-              <p className={slots.meta()}>
-                {formatDateTime(meeting.starts_at, getActiveLanguage())}
-                {' · '}
-                {t('meetings.duration', { count: meeting.duration_min })}
-                {' · '}
-                {t('meetings.participants', {
-                  count: meeting.participants_count,
-                })}
-              </p>
-              <p>
-                {t('meetings.rsvp.label')}
-                {': '}
-                {t(rsvpStatusKey(meeting.my_rsvp))}
-              </p>
+              <div
+                className={`${slots.meta()} flex flex-wrap items-center gap-x-3 gap-y-1`}
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  <Clock className="size-3.5" aria-hidden />
+                  {viewModel.startsAtLabel}
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <Timer className="size-3.5" aria-hidden />
+                  {viewModel.durationLabel}
+                </span>
+                <span className="inline-flex items-center gap-1.5">
+                  <Users className="size-3.5" aria-hidden />
+                  {viewModel.participantsLabel}
+                </span>
+              </div>
+              <p>{viewModel.rsvpStatusLabel}</p>
               <div className="flex flex-wrap gap-2">
                 <Button
                   className={buttonVariants({ intent: 'primary', size: 'sm' })}
-                  isDisabled={
-                    rsvpState.isLoading || meeting.my_rsvp === 'accepted'
-                  }
-                  onPress={() => {
-                    handleRsvp('accepted');
-                  }}
+                  isDisabled={viewModel.isAcceptDisabled}
+                  onPress={viewModel.handleAccept}
                 >
-                  {t('meetings.rsvp.accept')}
+                  <Check className="size-4" aria-hidden />
+                  {viewModel.acceptLabel}
                 </Button>
                 <Button
                   className={buttonVariants({ intent: 'danger', size: 'sm' })}
-                  isDisabled={
-                    rsvpState.isLoading || meeting.my_rsvp === 'declined'
-                  }
-                  onPress={() => {
-                    handleRsvp('declined');
-                  }}
+                  isDisabled={viewModel.isDeclineDisabled}
+                  onPress={viewModel.handleDecline}
                 >
-                  {t('meetings.rsvp.decline')}
+                  <X className="size-4" aria-hidden />
+                  {viewModel.declineLabel}
                 </Button>
                 <Button
                   variant="secondary"
-                  isPending={isJoining}
-                  isDisabled={meeting.status === 'finished'}
-                  onPress={handleJoin}
+                  isPending={viewModel.isJoining}
+                  isDisabled={viewModel.isJoinDisabled}
+                  onPress={viewModel.handleJoin}
                 >
-                  {isJoining ? t('meetings.joining') : t('meetings.join')}
+                  <Video className="size-4" aria-hidden />
+                  {viewModel.joinLabel}
                 </Button>
               </div>
-              {rsvpFailed ? (
-                <p role="alert">{t('meetings.rsvp.failed')}</p>
+              {viewModel.rsvpErrorMessage ? (
+                <p role="alert">{viewModel.rsvpErrorMessage}</p>
               ) : null}
-              {joinFailed ? (
-                <p role="alert">{t('meetings.joinFailed')}</p>
+              {viewModel.joinErrorMessage ? (
+                <p role="alert">{viewModel.joinErrorMessage}</p>
               ) : null}
             </Card.Content>
           </Card>
@@ -138,8 +108,9 @@ export function MeetingDetailsPage() {
           navigate('/');
         }}
       >
-        {t('common.back')}
+        <ArrowLeft className="size-4" aria-hidden />
+        {viewModel.backLabel}
       </Button>
-    </AppShell>
+    </>
   );
 }

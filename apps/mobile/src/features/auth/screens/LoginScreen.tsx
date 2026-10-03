@@ -1,16 +1,8 @@
 // react
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 // react-native
-import {
-  Alert,
-  Linking,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 // libraries
 import { StatusBar } from 'expo-status-bar';
@@ -21,16 +13,14 @@ import {
   MEET_APP_ERROR,
   MEET_APP_GREEN,
   MEET_APP_SUPPORT_EMAIL,
-  MEET_APP_TUTOR_LOGIN_URL,
   HELP_TEXT,
   LOGIN_TITLE,
-  SUBMIT_TITLE,
   TUTOR_LOGIN_TITLE,
 } from '../constants';
 
 // hooks
 import { useKeyboardBottomInset } from '@/shared/hooks/useKeyboardBottomInset';
-import { useMeetAppLogin } from '../hooks/useMeetAppLogin';
+import { useLoginScreen } from '../hooks/useLoginScreen';
 
 // components
 import { ForgotPasswordCard } from '../components/ForgotPasswordCard';
@@ -42,30 +32,31 @@ import { RecoverySheet } from '../components/RecoverySheet';
 import { loginChromeStyles } from '../styles/loginChromeStyles';
 
 // types
-import type { LoginScreenPropsType, RecoveryModeType } from '../types';
+import type { LoginScreenPropsType } from '../types';
 
 export function LoginScreen({ onSuccess }: LoginScreenPropsType) {
   const {
     phone,
     password,
     isPasswordVisible,
-    isSubmitting,
     isSubmitDisabled,
     errorMessage,
+    recoveryMode,
+    submitTitle,
+    submitOpacity,
     handleChangePhone,
     handleChangePassword,
     handleTogglePasswordVisibility,
     handleSubmit,
-  } = useMeetAppLogin({ onSuccess });
-  const [recoveryMode, setRecoveryMode] = useState<RecoveryModeType | null>(
-    null,
-  );
+    handleGooglePress,
+    handleOpenSmsSheet,
+    handleOpenEmailSheet,
+    handleCloseRecovery,
+    handleRecoverySuccess,
+    handleSupportEmail,
+    handleTutorLogin,
+  } = useLoginScreen({ onSuccess });
 
-  const submitTitle = useMemo(
-    () => (isSubmitting ? '...' : SUBMIT_TITLE),
-    [isSubmitting],
-  );
-  const submitOpacity = Number(!isSubmitDisabled) * 0.4 + 0.6;
   const errorView = useMemo(() => {
     if (!errorMessage) {
       return null;
@@ -77,38 +68,6 @@ export function LoginScreen({ onSuccess }: LoginScreenPropsType) {
       </Text>
     );
   }, [errorMessage]);
-
-  const handleGooglePress = useCallback(() => {
-    Alert.alert(
-      'Google',
-      'У цьому білді доступний вхід за телефоном і паролем.',
-    );
-  }, []);
-
-  const handleOpenSmsSheet = useCallback(() => {
-    setRecoveryMode('sms');
-  }, []);
-
-  const handleOpenEmailSheet = useCallback(() => {
-    setRecoveryMode('email');
-  }, []);
-
-  const handleCloseRecovery = useCallback(() => {
-    setRecoveryMode(null);
-  }, []);
-
-  const handleRecoverySuccess = useCallback(() => {
-    setRecoveryMode(null);
-    onSuccess();
-  }, [onSuccess]);
-
-  const handleSupportEmail = useCallback(() => {
-    Linking.openURL(`mailto:${MEET_APP_SUPPORT_EMAIL}`);
-  }, []);
-
-  const handleTutorLogin = useCallback(() => {
-    Linking.openURL(MEET_APP_TUTOR_LOGIN_URL);
-  }, []);
 
   const scrollViewRef = useRef<ScrollView>(null);
   const keyboardBottomInset = useKeyboardBottomInset();

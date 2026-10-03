@@ -20,6 +20,12 @@ const MOCK_PROFILE: ClientProfileType = {
   ],
 };
 
-export async function getClientProfile(): Promise<ClientProfileType> {
-  return MOCK_PROFILE;
-}
+export type ClientProfileRepositoryType = {
+  getProfile: () => Promise<ClientProfileType>;
+};
+
+export const clientProfileRepository: ClientProfileRepositoryType = {
+  getProfile() {
+    return Promise.resolve(MOCK_PROFILE);
+  },
+};

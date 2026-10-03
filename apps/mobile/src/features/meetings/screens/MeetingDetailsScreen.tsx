@@ -1,17 +1,13 @@
-import { useContext, useState } from 'react';
+import { useCallback, useContext } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
-import { useGetMeetingQuery, useRsvpMutation } from '@meet/api';
-import { formatDateTime, getActiveLanguage, rsvpStatusKey } from '@meet/i18n';
-import { useTranslation } from 'react-i18next';
+import { useMeetingDetailsViewModel } from '@meet/meetings';
 
 import { AppButton } from '../components/AppButton';
 import { StatusBadge } from '../components/StatusBadge';
 import { JoinServiceContext } from '../join/join-service-context';
-import { MediaPermissionDeniedError } from '../join/media-permission-denied-error';
+import { resolveMobileJoinFailure } from '../join/resolve-mobile-join-failure';
 import { meetingCardStyle, meetingsPalette } from '../styles/variant-styles';
-
-import type { RsvpInput } from '@meet/schemas';
 
 type MeetingDetailsScreenProps = {
   meetingId: string;
@@ -22,70 +18,42 @@ export function MeetingDetailsScreen({
   meetingId,
   onBack,
 }: MeetingDetailsScreenProps) {
-  const { t } = useTranslation();
   const joinService = useContext(JoinServiceContext);
-  const query = useGetMeetingQuery(meetingId);
-  const [rsvp, rsvpState] = useRsvpMutation();
-  const [rsvpFailed, setRsvpFailed] = useState(false);
-  const [isJoining, setIsJoining] = useState(false);
-  const [joinMessage, setJoinMessage] = useState<string | null>(null);
-  const meeting = query.data;
+  const joinMeeting = useCallback(
+    (id: string) => {
+      if (!joinService) {
+        return Promise.reject(new Error('Join service is missing'));
+      }
 
-  const handleRsvp = (status: RsvpInput['status']) => {
-    setRsvpFailed(false);
-    void rsvp({ id: meetingId, body: { status } })
-      .unwrap()
-      .catch(() => {
-        setRsvpFailed(true);
-      });
-  };
+      return joinService.join(id);
+    },
+    [joinService],
+  );
+  const viewModel = useMeetingDetailsViewModel({
+    meetingId,
+    joinMeeting: joinService ? joinMeeting : null,
+    resolveJoinFailure: resolveMobileJoinFailure,
+  });
+  const meeting = viewModel.meeting;
 
-  const handleJoin = () => {
-    if (!joinService) {
-      setJoinMessage(t('meetings.joinFailed'));
-      return;
-    }
-
-    setJoinMessage(null);
-    setIsJoining(true);
-    void joinService
-      .join(meetingId)
-      .catch((error: unknown) => {
-        if (error instanceof MediaPermissionDeniedError) {
-          setJoinMessage(t('meetings.permissionDenied'));
-          return;
-        }
-
-        setJoinMessage(t('meetings.joinFailed'));
-      })
-      .finally(() => {
-        setIsJoining(false);
-      });
-  };
-
-  if (query.isLoading) {
+  if (viewModel.isLoading) {
     return (
       <View style={styles.screen}>
         <ActivityIndicator />
-        <Text>{t('common.loading')}</Text>
+        <Text>{viewModel.loadingLabel}</Text>
       </View>
     );
   }
 
-  if (query.isError || !meeting) {
+  if (viewModel.isError || !meeting) {
     return (
       <View style={styles.screen}>
-        <Text>{t('common.error')}</Text>
-        <AppButton
-          intent="secondary"
-          onPress={() => {
-            void query.refetch();
-          }}
-        >
-          {t('common.retry')}
+        <Text>{viewModel.errorLabel}</Text>
+        <AppButton intent="secondary" onPress={viewModel.handleRetry}>
+          {viewModel.retryLabel}
         </AppButton>
         <AppButton intent="secondary" onPress={onBack}>
-          {t('common.back')}
+          {viewModel.backLabel}
         </AppButton>
       </View>
     );
@@ -99,50 +67,44 @@ export function MeetingDetailsScreen({
           <StatusBadge status={meeting.status} />
         </View>
         <Text style={styles.meta}>
-          {formatDateTime(meeting.starts_at, getActiveLanguage())}
+          {viewModel.startsAtLabel}
           {' · '}
-          {t('meetings.duration', { count: meeting.duration_min })}
+          {viewModel.durationLabel}
           {' · '}
-          {t('meetings.participants', { count: meeting.participants_count })}
+          {viewModel.participantsLabel}
         </Text>
-        <Text>
-          {t('meetings.rsvp.label')}
-          {': '}
-          {t(rsvpStatusKey(meeting.my_rsvp))}
-        </Text>
+        <Text>{viewModel.rsvpStatusLabel}</Text>
       </View>
       <AppButton
         size="sm"
-        isDisabled={rsvpState.isLoading || meeting.my_rsvp === 'accepted'}
-        onPress={() => {
-          handleRsvp('accepted');
-        }}
+        isDisabled={viewModel.isAcceptDisabled}
+        onPress={viewModel.handleAccept}
       >
-        {t('meetings.rsvp.accept')}
+        {viewModel.acceptLabel}
       </AppButton>
       <AppButton
         intent="danger"
         size="sm"
-        isDisabled={rsvpState.isLoading || meeting.my_rsvp === 'declined'}
-        onPress={() => {
-          handleRsvp('declined');
-        }}
+        isDisabled={viewModel.isDeclineDisabled}
+        onPress={viewModel.handleDecline}
       >
-        {t('meetings.rsvp.decline')}
+        {viewModel.declineLabel}
       </AppButton>
       <AppButton
         intent="secondary"
-        isDisabled={isJoining || meeting.status === 'finished'}
-        onPress={handleJoin}
+        isDisabled={viewModel.isJoining || viewModel.isJoinDisabled}
+        onPress={viewModel.handleJoin}
       >
-        {isJoining ? t('meetings.joining') : t('meetings.join')}
+        {viewModel.joinLabel}
       </AppButton>
-      {rsvpFailed ? (
-        <Text style={styles.error}>{t('meetings.rsvp.failed')}</Text>
+      {viewModel.rsvpErrorMessage ? (
+        <Text style={styles.error}>{viewModel.rsvpErrorMessage}</Text>
       ) : null}
-      {joinMessage ? <Text style={styles.error}>{joinMessage}</Text> : null}
+      {viewModel.joinErrorMessage ? (
+        <Text style={styles.error}>{viewModel.joinErrorMessage}</Text>
+      ) : null}
       <AppButton intent="secondary" onPress={onBack}>
-        {t('common.back')}
+        {viewModel.backLabel}
       </AppButton>
     </View>
   );

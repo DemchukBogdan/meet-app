@@ -1,67 +1,62 @@
 import { Button } from '@heroui/react';
-import {
-  setPage,
-  setStatus,
-  useListMeetingsQuery,
-  useMeetDispatch,
-  useMeetSelector,
-} from '@meet/api';
-import { meetingFilterKey } from '@meet/i18n';
-import {
-  MEETINGS_PAGE_SIZE,
-  filterToStatus,
-  meetingFilters,
-} from '@meet/schemas';
+import { useMeetingsListViewModel } from '@meet/meetings';
 import { buttonVariants } from '@meet/ui';
-import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import {
+  CalendarClock,
+  ChevronLeft,
+  ChevronRight,
+  CircleCheck,
+  LayoutGrid,
+  Plus,
+  Radio,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-import { AppShell } from '../components/app-shell';
+import { usePageTitle } from '../components/app-shell';
 import { MeetingCard } from '../components/meeting-card';
 import { QueryState } from '../components/query-state';
 
-export function MeetingsPage() {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const dispatch = useMeetDispatch();
-  const filters = useMeetSelector((state) => state.meetingsFilters);
-  const query = useListMeetingsQuery({
-    page: filters.page,
-    per_page: MEETINGS_PAGE_SIZE,
-    ...(filters.status ? { status: filters.status } : {}),
-  });
-  const total = query.data?.meta.total ?? 0;
-  const pages = Math.max(1, Math.ceil(total / MEETINGS_PAGE_SIZE));
-  const activeFilter = filters.status ?? 'all';
+import type { MeetingFilter } from '@meet/schemas';
+import type { LucideIcon } from 'lucide-react';
 
-  useEffect(() => {
-    // The active filter can shrink the list below the page that was open.
-    if (query.data && filters.page > pages) {
-      dispatch(setPage(pages));
-    }
-  }, [dispatch, filters.page, pages, query.data]);
+const filterIcons = {
+  all: LayoutGrid,
+  scheduled: CalendarClock,
+  live: Radio,
+  finished: CircleCheck,
+} satisfies Record<MeetingFilter, LucideIcon>;
+
+export function MeetingsPage() {
+  const navigate = useNavigate();
+  const viewModel = useMeetingsListViewModel();
+  usePageTitle(viewModel.title);
 
   return (
-    <AppShell title={t('meetings.title')}>
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap gap-2">
-          {meetingFilters.map((filter) => (
-            <Button
-              key={filter}
-              size="sm"
-              variant={activeFilter === filter ? 'primary' : 'secondary'}
-              className={buttonVariants({
-                intent: activeFilter === filter ? 'primary' : 'secondary',
-                size: 'sm',
-              })}
-              onPress={() => {
-                dispatch(setStatus(filterToStatus(filter)));
-              }}
-            >
-              {t(meetingFilterKey(filter))}
-            </Button>
-          ))}
+    <>
+      <div className="flex flex-col gap-3 rounded-2xl border border-stone-200 bg-white p-3 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-wrap gap-1 rounded-xl bg-stone-100 p-1">
+          {viewModel.filters.map((filter) => {
+            const FilterIcon = filterIcons[filter.id];
+
+            return (
+              <button
+                key={filter.id}
+                type="button"
+                aria-pressed={filter.isActive}
+                className={
+                  filter.isActive
+                    ? 'inline-flex items-center gap-1.5 rounded-lg bg-teal-700 px-3 py-2 text-sm font-medium text-white shadow-sm'
+                    : 'inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-stone-600 transition hover:bg-white hover:text-stone-900'
+                }
+                onClick={() => {
+                  viewModel.handleSelectFilter(filter.id);
+                }}
+              >
+                <FilterIcon className="size-4" aria-hidden />
+                {filter.label}
+              </button>
+            );
+          })}
         </div>
         <Button
           className={buttonVariants({ intent: 'primary', size: 'md' })}
@@ -69,46 +64,51 @@ export function MeetingsPage() {
             navigate('/meetings/new');
           }}
         >
-          {t('meetings.create')}
+          <Plus className="size-4" aria-hidden />
+          {viewModel.createLabel}
         </Button>
       </div>
       <QueryState
-        isLoading={query.isLoading}
-        isError={query.isError}
-        isEmpty={!query.data?.data.length}
-        onRetry={() => {
-          void query.refetch();
-        }}
+        isLoading={viewModel.isLoading}
+        isError={viewModel.isError}
+        isEmpty={viewModel.isEmpty}
+        loadingLabel={viewModel.loadingLabel}
+        errorLabel={viewModel.errorLabel}
+        emptyLabel={viewModel.emptyLabel}
+        retryLabel={viewModel.retryLabel}
+        onRetry={viewModel.handleRetry}
       >
-        <div className="flex flex-col gap-3">
-          {query.data?.data.map((meeting) => (
+        <div className="meet-stagger flex flex-col gap-3">
+          {viewModel.meetings.map((meeting) => (
             <MeetingCard key={meeting.id} meeting={meeting} />
           ))}
         </div>
       </QueryState>
-      {total > MEETINGS_PAGE_SIZE ? (
-        <div className="flex items-center justify-between gap-3">
-          <Button
-            variant="secondary"
-            isDisabled={filters.page <= 1}
-            onPress={() => {
-              dispatch(setPage(filters.page - 1));
-            }}
+      {viewModel.showPagination ? (
+        <div className="flex items-center justify-between gap-3 rounded-2xl border border-stone-200 bg-white px-3 py-2 shadow-sm">
+          <button
+            type="button"
+            className="inline-flex h-10 items-center gap-1 rounded-xl px-3 text-sm font-medium text-stone-700 transition hover:bg-stone-100 disabled:cursor-not-allowed disabled:text-stone-300 disabled:hover:bg-transparent"
+            disabled={viewModel.isPreviousDisabled}
+            onClick={viewModel.handlePreviousPage}
           >
-            {t('meetings.pagination.previous')}
-          </Button>
-          <p>{t('meetings.pagination.label', { page: filters.page, pages })}</p>
-          <Button
-            variant="secondary"
-            isDisabled={filters.page >= pages}
-            onPress={() => {
-              dispatch(setPage(filters.page + 1));
-            }}
+            <ChevronLeft className="size-4" aria-hidden />
+            {viewModel.previousPageLabel}
+          </button>
+          <p className="text-sm font-medium text-stone-500">
+            {viewModel.paginationLabel}
+          </p>
+          <button
+            type="button"
+            className="inline-flex h-10 items-center gap-1 rounded-xl bg-teal-700 px-3 text-sm font-medium text-white transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:bg-stone-200 disabled:text-stone-400"
+            disabled={viewModel.isNextDisabled}
+            onClick={viewModel.handleNextPage}
           >
-            {t('meetings.pagination.next')}
-          </Button>
+            {viewModel.nextPageLabel}
+            <ChevronRight className="size-4" aria-hidden />
+          </button>
         </div>
       ) : null}
-    </AppShell>
+    </>
   );
 }

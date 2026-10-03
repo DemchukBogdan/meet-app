@@ -1,5 +1,5 @@
 // react
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 // react-native
 import { StyleSheet, Text, View } from 'react-native';
@@ -10,15 +10,12 @@ import { StatusBar } from 'expo-status-bar';
 // constants
 import { APP_WORDMARK } from '@/features/auth/constants';
 
-// api
-import { logoutMeetAppClient } from '@/features/auth/api/meetAppAuthApi';
-
 // features
 import { ClientCalendarScreen } from '@/features/calendar';
 import { ZoomProvider, getZoomJwtToken } from '@/features/zoom';
 
 // hooks
-import { useClientProfile } from '../hooks/useClientProfile';
+import { useClientCabinet } from '../hooks/useClientCabinet';
 
 // components
 import {
@@ -31,50 +28,26 @@ import { ClientProfileContent } from './ClientProfileScreen';
 import { loginChromeStyles } from '@/features/auth/styles/loginChromeStyles';
 
 // types
-import type { CabinetTabType, ClientProfileScreenPropsType } from '../types';
+import type { ClientProfileScreenPropsType } from '../types';
 
 function CabinetBody({
   onLogout,
   canUseZoomSdk,
 }: ClientProfileScreenPropsType & { canUseZoomSdk: boolean }) {
-  const { profile, isLoading, errorMessage, loadProfile } = useClientProfile({
-    onUnauthorized: onLogout,
-  });
-  const [activeTab, setActiveTab] = useState<CabinetTabType>('profile');
-  const [isMoreOpen, setIsMoreOpen] = useState(false);
-
-  const handleOpenMore = useCallback(() => {
-    setIsMoreOpen(true);
-  }, []);
-
-  const handleCloseMore = useCallback(() => {
-    setIsMoreOpen(false);
-  }, []);
-
-  const handleTabPress = useCallback((tab: CabinetTabType) => {
-    setIsMoreOpen(false);
-    setActiveTab(tab);
-  }, []);
-
-  const handleLogout = useCallback(async () => {
-    setIsMoreOpen(false);
-    await logoutMeetAppClient();
-    onLogout();
-  }, [onLogout]);
-
-  const handleRetry = useCallback(() => {
-    void loadProfile();
-  }, [loadProfile]);
-
-  const canReplenish = useMemo(
-    () =>
-      Boolean(
-        profile &&
-        !profile.isAdditionalPhoneLogin &&
-        profile.fillBalanceOrdersCount > 0,
-      ),
-    [profile],
-  );
+  const {
+    profile,
+    isLoading,
+    errorMessage,
+    activeTab,
+    isMoreOpen,
+    canReplenish,
+    studentName,
+    handleOpenMore,
+    handleCloseMore,
+    handleTabPress,
+    handleLogout,
+    handleRetry,
+  } = useClientCabinet({ onLogout, canUseZoomSdk });
 
   const balanceBarView = useMemo(() => {
     if (!profile) {
@@ -94,7 +67,7 @@ function CabinetBody({
     if (activeTab === 'calendar') {
       return (
         <ClientCalendarScreen
-          studentName={profile?.name ?? ''}
+          studentName={studentName}
           canUseZoomSdk={canUseZoomSdk}
         />
       );
@@ -109,7 +82,15 @@ function CabinetBody({
         onRetry={handleRetry}
       />
     );
-  }, [activeTab, canUseZoomSdk, errorMessage, handleRetry, isLoading, profile]);
+  }, [
+    activeTab,
+    canUseZoomSdk,
+    errorMessage,
+    handleRetry,
+    isLoading,
+    profile,
+    studentName,
+  ]);
 
   return (
     <View style={styles.root}>

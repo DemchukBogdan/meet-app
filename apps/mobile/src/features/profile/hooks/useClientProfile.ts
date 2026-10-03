@@ -1,8 +1,8 @@
 // react
 import { useCallback, useEffect, useState } from 'react';
 
-// api
-import { getClientProfile } from '../api/meetAppProfileApi';
+// model
+import { clientProfileRepository } from '../model/clientProfileRepository';
 
 // constants
 import { PROFILE_LOAD_ERROR } from '../constants';
@@ -29,7 +29,7 @@ export function useClientProfile({
     setErrorMessage(null);
 
     try {
-      const nextProfile = await getClientProfile();
+      const nextProfile = await clientProfileRepository.getProfile();
       setProfile(nextProfile);
     } catch (error) {
       if (

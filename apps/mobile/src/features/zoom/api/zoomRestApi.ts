@@ -99,12 +99,54 @@ export async function getZoomS2SAccessToken({
   return accessToken;
 }
 
-async function zoomApiRequest<ResponseType>(params: {
+type ZoomApiRequestParamsType = {
   accessToken: string;
   path: string;
   method?: 'GET' | 'POST';
   body?: unknown;
-}): Promise<ResponseType> {
+};
+
+function readOptionalString(value: unknown): string | undefined {
+  return typeof value === 'string' ? value : undefined;
+}
+
+function readZoomId(value: unknown): number | string | undefined {
+  if (typeof value === 'number' || typeof value === 'string') {
+    return value;
+  }
+
+  return undefined;
+}
+
+function parseCreateMeetingResponse(
+  payload: unknown,
+): ZoomCreateMeetingResponseType {
+  if (!isRecord(payload)) {
+    throw new Error('Zoom API returned an unexpected response.');
+  }
+
+  return {
+    id: readZoomId(payload.id),
+    password: readOptionalString(payload.password),
+    join_url: readOptionalString(payload.join_url),
+    start_url: readOptionalString(payload.start_url),
+    topic: readOptionalString(payload.topic),
+  };
+}
+
+function parseZakResponse(payload: unknown): ZoomZakResponseType {
+  if (!isRecord(payload)) {
+    throw new Error('Zoom API returned an unexpected response.');
+  }
+
+  return {
+    token: readOptionalString(payload.token),
+  };
+}
+
+async function zoomApiRequest(
+  params: ZoomApiRequestParamsType,
+): Promise<unknown> {
   const response = await fetch(`${ZOOM_API_BASE_URL}${params.path}`, {
     method: params.method ?? 'GET',
     headers: {
@@ -122,7 +164,7 @@ async function zoomApiRequest<ResponseType>(params: {
     );
   }
 
-  return payload as ResponseType;
+  return payload;
 }
 
 export async function createZoomInstantMeeting({
@@ -130,21 +172,23 @@ export async function createZoomInstantMeeting({
   userEmail,
   topic,
 }: CreateZoomInstantMeetingParamsType): Promise<CreatedZoomMeetingType> {
-  const meeting = await zoomApiRequest<ZoomCreateMeetingResponseType>({
-    accessToken,
-    path: `/users/${encodeURIComponent(userEmail)}/meetings`,
-    method: 'POST',
-    body: {
-      topic,
-      type: 1,
-      settings: {
-        host_video: true,
-        participant_video: true,
-        join_before_host: true,
-        waiting_room: false,
+  const meeting = parseCreateMeetingResponse(
+    await zoomApiRequest({
+      accessToken,
+      path: `/users/${encodeURIComponent(userEmail)}/meetings`,
+      method: 'POST',
+      body: {
+        topic,
+        type: 1,
+        settings: {
+          host_video: true,
+          participant_video: true,
+          join_before_host: true,
+          waiting_room: false,
+        },
       },
-    },
-  });
+    }),
+  );
 
   if (meeting.id == null) {
     throw new Error('Zoom created a meeting without an id.');
@@ -163,10 +207,12 @@ export async function getZoomAccessKey(params: {
   accessToken: string;
   userEmail: string;
 }): Promise<string> {
-  const zak = await zoomApiRequest<ZoomZakResponseType>({
-    accessToken: params.accessToken,
-    path: `/users/${encodeURIComponent(params.userEmail)}/token?type=zak`,
-  });
+  const zak = parseZakResponse(
+    await zoomApiRequest({
+      accessToken: params.accessToken,
+      path: `/users/${encodeURIComponent(params.userEmail)}/token?type=zak`,
+    }),
+  );
 
   if (!zak.token) {
     throw new Error('Zoom did not return a ZAK token.');

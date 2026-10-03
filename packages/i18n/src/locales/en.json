@@ -59,8 +59,21 @@
       "error": "Could not create the meeting"
     },
     "details": {
-      "title": "Meeting details"
+      "title": "Meeting details",
+      "notFound": "Meeting not found"
     }
+  },
+  "auth": {
+    "title": "Sign in",
+    "phone": "Phone",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in…",
+    "phoneRequired": "Enter a phone number",
+    "passwordRequired": "Enter a password",
+    "failed": "Could not sign in",
+    "hint": "Any phone and password open the demo session.",
+    "logout": "Sign out"
   },
   "validation": {
     "titleRequired": "Enter a title",

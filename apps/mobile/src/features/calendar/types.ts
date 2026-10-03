@@ -38,3 +38,11 @@ export type ClientCalendarScreenPropsType = {
   studentName: string;
   canUseZoomSdk: boolean;
 };
+
+export type CalendarJoinActionsType = {
+  isJoining: boolean;
+  handleJoinLesson: (lessonLink: string) => Promise<void>;
+  handleOpenZoomApp: (lessonLink: string) => Promise<void>;
+};
+
+export type LessonJoinActionKindType = 'join' | 'pay';

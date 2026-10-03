@@ -6,6 +6,7 @@ import {
   meetingSchema,
 } from '@meet/schemas';
 
+import { getRegisteredAccessToken } from './access-token';
 import { MEETINGS_API_ORIGIN } from './base-url';
 
 import type {
@@ -29,7 +30,17 @@ function meetingTag(id: string): MeetingTag {
 
 export const meetingsApi = createApi({
   reducerPath: 'meetingsApi',
-  baseQuery: fetchBaseQuery({ baseUrl: MEETINGS_API_ORIGIN }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: MEETINGS_API_ORIGIN,
+    prepareHeaders: (headers) => {
+      const accessToken = getRegisteredAccessToken();
+      if (accessToken) {
+        headers.set('Authorization', `Bearer ${accessToken}`);
+      }
+
+      return headers;
+    },
+  }),
   tagTypes: ['Meeting'],
   endpoints: (build) => ({
     listMeetings: build.query<MeetingList, ListMeetingsQuery>({

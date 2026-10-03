@@ -1,4 +1,8 @@
 export { MEETINGS_API_ORIGIN } from './base-url';
+export {
+  getRegisteredAccessToken,
+  registerAccessTokenReader,
+} from './access-token';
 export { useMeetDispatch, useMeetSelector } from './hooks';
 export {
   meetingsApi,

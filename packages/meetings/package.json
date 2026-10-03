@@ -1,0 +1,30 @@
+{
+  "name": "@meet/meetings",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint src --max-warnings 0",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@meet/api": "workspace:*",
+    "@meet/i18n": "workspace:*",
+    "@meet/schemas": "workspace:*",
+    "react-i18next": "^16.0.0"
+  },
+  "peerDependencies": {
+    "react": "19.2.3",
+    "react-redux": "^9.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.2",
+    "react": "19.2.3",
+    "react-redux": "^9.2.0",
+    "typescript": "~6.0.3"
+  }
+}

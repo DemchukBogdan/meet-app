@@ -1,11 +1,8 @@
 // react
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-// api
-import {
-  loginMeetAppClientByCode,
-  requestMeetAppAuthCode,
-} from '../api/meetAppAuthApi';
+// model
+import { meetAppAuthRepository } from '../model/meetAppAuthRepository';
 
 // constants
 import {
@@ -164,7 +161,7 @@ export function useMeetAppSmsLogin({
     setErrorMessage(null);
 
     try {
-      const result = await requestMeetAppAuthCode({
+      const result = await meetAppAuthRepository.requestCode({
         phonePlain,
         phoneDefaultCountryCode: true,
       });
@@ -193,7 +190,7 @@ export function useMeetAppSmsLogin({
     setErrorMessage(null);
 
     try {
-      await loginMeetAppClientByCode({
+      await meetAppAuthRepository.loginByCode({
         clientId,
         authCode,
       });

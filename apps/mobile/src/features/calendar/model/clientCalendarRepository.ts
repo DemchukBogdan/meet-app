@@ -26,6 +26,8 @@ const WEEKDAY_KEYS = [
   'Sunday',
 ] as const;
 
+type WeekdayKeyType = (typeof WEEKDAY_KEYS)[number];
+
 const MOCK_JOIN_LINK = 'https://zoom.us/j/12345678901?pwd=mock';
 
 type MockLessonSeedType = {
@@ -84,6 +86,10 @@ const MOCK_LESSON_SEEDS: MockLessonSeedType[] = [
   },
 ];
 
+export type ClientCalendarRepositoryType = {
+  getWeek: (page: number) => Promise<CalendarWeekType>;
+};
+
 function startOfWeek(page: number, now: Date): Date {
   const day = now.getDay();
   const mondayOffset = day === 0 ? -6 : 1 - day;
@@ -105,7 +111,7 @@ function getTodayKey(now: Date): string {
 
 function buildDay(
   date: Date,
-  weekdayKey: string,
+  weekdayKey: WeekdayKeyType,
   todayKey: string,
 ): CalendarDayType {
   const day = date.getDate();
@@ -154,9 +160,7 @@ function buildLesson(
   };
 }
 
-export async function getClientCalendarWeek(
-  page: number,
-): Promise<CalendarWeekType> {
+function buildMockCalendarWeek(page: number): CalendarWeekType {
   const serverNow = new Date();
   const todayKey = getTodayKey(serverNow);
   const weekStart = startOfWeek(page, serverNow);
@@ -192,3 +196,9 @@ export async function getClientCalendarWeek(
     lessons,
   };
 }
+
+export const clientCalendarRepository: ClientCalendarRepositoryType = {
+  getWeek(page) {
+    return Promise.resolve(buildMockCalendarWeek(page));
+  },
+};

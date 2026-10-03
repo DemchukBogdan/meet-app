@@ -1,20 +1,9 @@
-import { useCallback, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
-import { readValidationErrorBody, useCreateMeetingMutation } from '@meet/api';
-import { validationErrorKey } from '@meet/i18n';
-import { CreateMeetingForm } from '@meet/schemas';
-import { useTranslation } from 'react-i18next';
+import { useCreateMeetingViewModel } from '@meet/meetings';
 
 import { AppButton } from '../components/AppButton';
 import { meetingsPalette } from '../styles/variant-styles';
-
-import type {
-  CreateMeetingField,
-  CreateMeetingFieldErrors,
-} from '@meet/schemas';
-
-const emptyErrors: CreateMeetingFieldErrors = {};
 
 type CreateMeetingScreenProps = {
   onBack: () => void;
@@ -25,89 +14,44 @@ export function CreateMeetingScreen({
   onBack,
   onCreated,
 }: CreateMeetingScreenProps) {
-  const { t } = useTranslation();
-  const [title, setTitle] = useState('');
-  const [startsAtLocal, setStartsAtLocal] = useState('');
-  const [durationMin, setDurationMin] = useState('45');
-  const [clientErrors, setClientErrors] =
-    useState<CreateMeetingFieldErrors>(emptyErrors);
-  const [serverErrors, setServerErrors] = useState<Record<string, string[]>>(
-    {},
-  );
-  const [hasRequestError, setHasRequestError] = useState(false);
-  const [createMeeting, { isLoading }] = useCreateMeetingMutation();
-
-  const messageFor = useCallback(
-    (field: CreateMeetingField): string | undefined => {
-      const code = clientErrors[field];
-      if (code) {
-        return t(validationErrorKey(code));
-      }
-
-      return serverErrors[field]?.[0];
-    },
-    [clientErrors, serverErrors, t],
-  );
-
-  const handleSubmit = useCallback(() => {
-    setServerErrors({});
-    setHasRequestError(false);
-    const result = new CreateMeetingForm({
-      title,
-      startsAtLocal,
-      durationMin,
-    }).validate();
-    if (!result.ok) {
-      setClientErrors(result.fieldErrors);
-      return;
-    }
-
-    setClientErrors(emptyErrors);
-    void createMeeting(result.data)
-      .unwrap()
-      .then((meeting) => {
-        onCreated(meeting.id);
-      })
-      .catch((error: unknown) => {
-        const validation = readValidationErrorBody(error);
-        if (validation) {
-          setServerErrors(validation.errors);
-          return;
-        }
-
-        setHasRequestError(true);
-      });
-  }, [createMeeting, durationMin, onCreated, startsAtLocal, title]);
+  const viewModel = useCreateMeetingViewModel({ onCreated });
 
   return (
     <View style={styles.screen}>
-      <Text style={styles.title}>{t('meetings.form.title')}</Text>
-      <Text style={styles.label}>{t('meetings.form.name')}</Text>
-      <TextInput style={styles.input} value={title} onChangeText={setTitle} />
-      <FieldMessage message={messageFor('title')} />
-      <Text style={styles.label}>{t('meetings.form.startsAt')}</Text>
+      <Text style={styles.title}>{viewModel.screenTitle}</Text>
+      <Text style={styles.label}>{viewModel.nameLabel}</Text>
       <TextInput
         style={styles.input}
-        value={startsAtLocal}
-        onChangeText={setStartsAtLocal}
+        value={viewModel.title}
+        onChangeText={viewModel.handleChangeTitle}
       />
-      <FieldMessage message={messageFor('starts_at')} />
-      <Text style={styles.label}>{t('meetings.form.duration')}</Text>
+      <FieldMessage message={viewModel.titleError} />
+      <Text style={styles.label}>{viewModel.startsAtLabel}</Text>
+      <TextInput
+        style={styles.input}
+        value={viewModel.startsAtLocal}
+        onChangeText={viewModel.handleChangeStartsAt}
+      />
+      <FieldMessage message={viewModel.startsAtError} />
+      <Text style={styles.label}>{viewModel.durationLabel}</Text>
       <TextInput
         keyboardType="number-pad"
         style={styles.input}
-        value={durationMin}
-        onChangeText={setDurationMin}
+        value={viewModel.durationMin}
+        onChangeText={viewModel.handleChangeDuration}
       />
-      <FieldMessage message={messageFor('duration_min')} />
-      {hasRequestError ? (
-        <Text style={styles.error}>{t('meetings.form.error')}</Text>
+      <FieldMessage message={viewModel.durationError} />
+      {viewModel.requestErrorMessage ? (
+        <Text style={styles.error}>{viewModel.requestErrorMessage}</Text>
       ) : null}
-      <AppButton isDisabled={isLoading} onPress={handleSubmit}>
-        {isLoading ? t('meetings.form.submitting') : t('meetings.form.submit')}
+      <AppButton
+        isDisabled={viewModel.isSubmitting}
+        onPress={viewModel.handleSubmit}
+      >
+        {viewModel.submitLabel}
       </AppButton>
       <AppButton intent="secondary" onPress={onBack}>
-        {t('common.back')}
+        {viewModel.backLabel}
       </AppButton>
     </View>
   );

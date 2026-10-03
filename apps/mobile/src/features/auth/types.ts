@@ -1,8 +1,10 @@
+export type MeetAppRoleType = 'client' | 'tutor' | 'admin';
+
 export type MeetAppAuthStateType = {
   client: boolean;
   tutor: boolean;
   admin: boolean;
-  currentRole: string;
+  currentRole: MeetAppRoleType;
 };
 
 export type MeetAppLoginParamsType = {
@@ -25,9 +27,13 @@ export type MeetAppLoginByCodeParamsType = {
   authCode: string;
 };
 
+export type MeetAppClientSessionType = {
+  clientId: number;
+};
+
 export type MeetAppLoginResultType = {
   auth: MeetAppAuthStateType;
-  data: unknown;
+  data: MeetAppClientSessionType;
 };
 
 export type LoginScreenPropsType = {

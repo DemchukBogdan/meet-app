@@ -1,9 +1,13 @@
+import { registerAccessTokenReader } from '@meet/api';
 import { createI18n } from '@meet/i18n';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { App } from './app/App';
+import { readAuthSession } from './features/auth/model/auth-session-storage';
 import './index.css';
+
+registerAccessTokenReader(() => readAuthSession()?.accessToken ?? null);
 
 async function start(): Promise<void> {
   createI18n();

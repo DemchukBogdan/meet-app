@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -8,20 +7,7 @@ import {
   View,
 } from 'react-native';
 
-import {
-  setPage,
-  setStatus,
-  useListMeetingsQuery,
-  useMeetDispatch,
-  useMeetSelector,
-} from '@meet/api';
-import { meetingFilterKey } from '@meet/i18n';
-import {
-  MEETINGS_PAGE_SIZE,
-  filterToStatus,
-  meetingFilters,
-} from '@meet/schemas';
-import { useTranslation } from 'react-i18next';
+import { useMeetingsListViewModel } from '@meet/meetings';
 
 import { AppButton } from '../components/AppButton';
 import { MeetingCard } from '../components/MeetingCard';
@@ -33,117 +19,79 @@ type MeetingsScreenProps = {
 };
 
 export function MeetingsScreen({ onCreate, onOpen }: MeetingsScreenProps) {
-  const { i18n, t } = useTranslation();
-  const dispatch = useMeetDispatch();
-  const filters = useMeetSelector((state) => state.meetingsFilters);
-  const query = useListMeetingsQuery({
-    page: filters.page,
-    per_page: MEETINGS_PAGE_SIZE,
-    ...(filters.status ? { status: filters.status } : {}),
-  });
-  const total = query.data?.meta.total ?? 0;
-  const pages = Math.max(1, Math.ceil(total / MEETINGS_PAGE_SIZE));
-  const activeFilter = filters.status ?? 'all';
-
-  useEffect(() => {
-    // The active filter can shrink the list below the page that was open.
-    if (query.data && filters.page > pages) {
-      dispatch(setPage(pages));
-    }
-  }, [dispatch, filters.page, pages, query.data]);
+  const viewModel = useMeetingsListViewModel();
 
   return (
     <View style={styles.screen}>
       <View style={styles.header}>
-        <Text style={styles.title}>{t('meetings.title')}</Text>
-        <Pressable
-          onPress={() => {
-            void i18n.changeLanguage(
-              i18n.resolvedLanguage === 'en' ? 'uk' : 'en',
-            );
-          }}
-        >
+        <Text style={styles.title}>{viewModel.title}</Text>
+        <Pressable onPress={viewModel.handleToggleLanguage}>
           <Text style={styles.filterActive}>
-            {t(i18n.resolvedLanguage === 'en' ? 'language.uk' : 'language.en')}
+            {viewModel.oppositeLanguageLabel}
           </Text>
         </Pressable>
       </View>
       <View style={styles.filters}>
-        {meetingFilters.map((filter) => (
+        {viewModel.filters.map((filter) => (
           <Pressable
-            key={filter}
+            key={filter.id}
             style={styles.filter}
             onPress={() => {
-              dispatch(setStatus(filterToStatus(filter)));
+              viewModel.handleSelectFilter(filter.id);
             }}
           >
             <Text
-              style={
-                activeFilter === filter
-                  ? styles.filterActive
-                  : styles.filterLabel
-              }
+              style={filter.isActive ? styles.filterActive : styles.filterLabel}
             >
-              {t(meetingFilterKey(filter))}
+              {filter.label}
             </Text>
           </Pressable>
         ))}
       </View>
-      <AppButton onPress={onCreate}>{t('meetings.create')}</AppButton>
-      {query.isLoading ? (
+      <AppButton onPress={onCreate}>{viewModel.createLabel}</AppButton>
+      {viewModel.isLoading ? (
         <View style={styles.state}>
           <ActivityIndicator />
-          <Text>{t('common.loading')}</Text>
+          <Text>{viewModel.loadingLabel}</Text>
         </View>
       ) : null}
-      {query.isError ? (
+      {viewModel.isError ? (
         <View style={styles.state}>
-          <Text>{t('common.error')}</Text>
-          <AppButton
-            intent="secondary"
-            onPress={() => {
-              void query.refetch();
-            }}
-          >
-            {t('common.retry')}
+          <Text>{viewModel.errorLabel}</Text>
+          <AppButton intent="secondary" onPress={viewModel.handleRetry}>
+            {viewModel.retryLabel}
           </AppButton>
         </View>
       ) : null}
-      {!query.isLoading && !query.isError && !query.data?.data.length ? (
-        <Text style={styles.state}>{t('common.empty')}</Text>
+      {viewModel.isEmpty ? (
+        <Text style={styles.state}>{viewModel.emptyLabel}</Text>
       ) : null}
       <FlatList
-        data={query.data?.data ?? []}
+        data={viewModel.meetings}
         keyExtractor={(meeting) => meeting.id}
         contentContainerStyle={styles.list}
         renderItem={({ item }) => (
           <MeetingCard meeting={item} onPress={onOpen} />
         )}
       />
-      {total > MEETINGS_PAGE_SIZE ? (
+      {viewModel.showPagination ? (
         <View style={styles.pagination}>
           <AppButton
             intent="secondary"
             size="sm"
-            isDisabled={filters.page <= 1}
-            onPress={() => {
-              dispatch(setPage(filters.page - 1));
-            }}
+            isDisabled={viewModel.isPreviousDisabled}
+            onPress={viewModel.handlePreviousPage}
           >
-            {t('meetings.pagination.previous')}
+            {viewModel.previousPageLabel}
           </AppButton>
-          <Text>
-            {t('meetings.pagination.label', { page: filters.page, pages })}
-          </Text>
+          <Text>{viewModel.paginationLabel}</Text>
           <AppButton
             intent="secondary"
             size="sm"
-            isDisabled={filters.page >= pages}
-            onPress={() => {
-              dispatch(setPage(filters.page + 1));
-            }}
+            isDisabled={viewModel.isNextDisabled}
+            onPress={viewModel.handleNextPage}
           >
-            {t('meetings.pagination.next')}
+            {viewModel.nextPageLabel}
           </AppButton>
         </View>
       ) : null}
