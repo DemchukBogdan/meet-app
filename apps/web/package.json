@@ -1,0 +1,39 @@
+{
+  "name": "@meet/web",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "lint": "eslint src --max-warnings 0",
+    "typecheck": "tsc --noEmit",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@heroui/react": "^3.0.0",
+    "@heroui/styles": "^3.0.0",
+    "@meet/api": "workspace:*",
+    "@meet/i18n": "workspace:*",
+    "@meet/join": "workspace:*",
+    "@meet/mocks": "workspace:*",
+    "@meet/schemas": "workspace:*",
+    "@meet/ui": "workspace:*",
+    "@reduxjs/toolkit": "^2.9.0",
+    "i18next": "^25.5.2",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-i18next": "^16.0.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.9.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.13",
+    "@types/react": "~19.2.2",
+    "@types/react-dom": "~19.2.2",
+    "@vitejs/plugin-react": "^5.0.4",
+    "tailwindcss": "^4.1.13",
+    "typescript": "~6.0.3",
+    "vite": "^7.1.7"
+  }
+}
