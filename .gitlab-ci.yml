@@ -1,0 +1,47 @@
+image: node:22
+
+stages:
+  - lint
+  - typecheck
+  - test
+  - build
+
+variables:
+  PNPM_VERSION: '10.18.1'
+
+.pnpm:
+  before_script:
+    - corepack enable
+    - corepack prepare pnpm@${PNPM_VERSION} --activate
+    - pnpm config set store-dir .pnpm-store
+    - pnpm install --frozen-lockfile
+  cache:
+    key:
+      files:
+        - pnpm-lock.yaml
+    paths:
+      - .pnpm-store
+
+lint:
+  extends: .pnpm
+  stage: lint
+  script:
+    - pnpm lint
+
+typecheck:
+  extends: .pnpm
+  stage: typecheck
+  script:
+    - pnpm typecheck
+
+test:
+  extends: .pnpm
+  stage: test
+  script:
+    - pnpm test
+
+build:
+  extends: .pnpm
+  stage: build
+  script:
+    - pnpm build

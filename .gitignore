@@ -44,3 +44,11 @@ zoom.runtime.json
 # generated native folders
 /ios
 /android
+/apps/mobile/ios
+/apps/mobile/android
+
+# monorepo
+.turbo
+.pnpm-store
+apps/web/dist
+dist

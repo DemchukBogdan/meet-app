@@ -1,0 +1,33 @@
+{
+  "name": "@meet/api",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint src --max-warnings 0",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "build": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@meet/join": "workspace:*",
+    "@meet/schemas": "workspace:*",
+    "@reduxjs/toolkit": "^2.9.0"
+  },
+  "peerDependencies": {
+    "react": "19.2.3",
+    "react-redux": "^9.2.0"
+  },
+  "devDependencies": {
+    "@meet/mocks": "workspace:*",
+    "@types/react": "~19.2.2",
+    "msw": "^2.11.3",
+    "react": "19.2.3",
+    "react-redux": "^9.2.0",
+    "typescript": "~6.0.3",
+    "vitest": "^3.2.4"
+  }
+}

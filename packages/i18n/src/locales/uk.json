@@ -1,0 +1,71 @@
+{
+  "language": {
+    "uk": "Українська",
+    "en": "English",
+    "label": "Мова"
+  },
+  "common": {
+    "loading": "Завантаження…",
+    "empty": "Зустрічей не знайдено",
+    "error": "Не вдалося завантажити дані",
+    "retry": "Спробувати ще раз",
+    "back": "Назад",
+    "userName": "Олена Коваленко"
+  },
+  "meetings": {
+    "title": "Зустрічі",
+    "create": "Нова зустріч",
+    "join": "Приєднатися",
+    "joining": "Підключення…",
+    "joinFailed": "Не вдалося приєднатися",
+    "permissionDenied": "Дозвольте камеру і мікрофон, щоб увійти в зустріч",
+    "filter": {
+      "all": "Усі",
+      "scheduled": "Заплановані",
+      "live": "Наживо",
+      "finished": "Завершені"
+    },
+    "status": {
+      "scheduled": "Запланована",
+      "live": "Наживо",
+      "finished": "Завершена"
+    },
+    "rsvp": {
+      "label": "Ваша відповідь",
+      "accepted": "Прийнято",
+      "declined": "Відхилено",
+      "pending": "Очікує",
+      "accept": "Піду",
+      "decline": "Не піду",
+      "failed": "Не вдалося зберегти відповідь"
+    },
+    "duration": "{{count}} хв",
+    "participants_one": "{{count}} учасник",
+    "participants_few": "{{count}} учасники",
+    "participants_many": "{{count}} учасників",
+    "participants_other": "{{count}} учасників",
+    "pagination": {
+      "previous": "Попередня",
+      "next": "Наступна",
+      "label": "Сторінка {{page}} з {{pages}}"
+    },
+    "form": {
+      "title": "Нова зустріч",
+      "name": "Назва",
+      "startsAt": "Початок",
+      "duration": "Тривалість, хвилини",
+      "submit": "Створити",
+      "submitting": "Створення…",
+      "error": "Не вдалося створити зустріч"
+    },
+    "details": {
+      "title": "Деталі зустрічі"
+    }
+  },
+  "validation": {
+    "titleRequired": "Вкажіть назву",
+    "titleMax": "Назва має бути не довшою за 120 символів",
+    "startsAt": "Вкажіть дату і час початку",
+    "duration": "Тривалість має бути цілим додатним числом хвилин"
+  }
+}
