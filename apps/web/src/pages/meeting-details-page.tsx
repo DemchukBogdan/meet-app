@@ -27,6 +27,7 @@ export function MeetingDetailsPage() {
   const slots = meetingCardVariants({
     status: meeting?.status ?? 'scheduled',
     interactive: false,
+    surface: 'panel',
   });
 
   return (

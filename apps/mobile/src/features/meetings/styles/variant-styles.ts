@@ -1,5 +1,7 @@
 import { StyleSheet, type TextStyle, type ViewStyle } from 'react-native';
 
+import { resolveMeetingCardEmphasis } from '@meet/ui';
+
 import type { MeetingStatus } from '@meet/schemas';
 import type { ButtonVariantProps } from '@meet/ui';
 
@@ -96,7 +98,7 @@ export function meetingCardStyle(
   interactive: boolean,
 ): ViewStyle {
   const emphasis =
-    status === 'live' && interactive
+    resolveMeetingCardEmphasis(status, interactive) === 'ring'
       ? styles.liveInteractive
       : styles.cardBorder;
 
