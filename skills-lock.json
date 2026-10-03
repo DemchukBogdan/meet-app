@@ -150,6 +150,12 @@
       "sourceType": "github",
       "skillPath": "plugins/expo/skills/expo-web-to-native/SKILL.md",
       "computedHash": "91c5a9827989c25d997893216741fcbc5681260848dbc40ca890f03bb68ba451"
+    },
+    "typescript": {
+      "source": "lobehub/lobehub",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/typescript/SKILL.md",
+      "computedHash": "a70ca638742bd02676093228c1228a97ffd6611d69b0309aed3cbf187227d660"
     }
   }
 }
