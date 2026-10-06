@@ -6,6 +6,7 @@ import { AuthSessionProvider } from '../features/auth/auth-session-context';
 import { RequireAuth } from '../features/auth/require-auth';
 import { JoinServiceProvider } from '../join/join-service-context';
 import { CreateMeetingPage } from '../pages/create-meeting-page';
+import { IconTestPage } from '../pages/icon-test-page';
 import { LoginPage } from '../pages/login-page';
 import { MeetingDetailsPage } from '../pages/meeting-details-page';
 import { MeetingsPage } from '../pages/meetings-page';
@@ -20,6 +21,7 @@ export function App() {
             <Routes>
               <Route element={<AppShell />}>
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="/icon" element={<IconTestPage />} />
                 <Route element={<RequireAuth />}>
                   <Route path="/" element={<MeetingsPage />} />
                   <Route path="/meetings/new" element={<CreateMeetingPage />} />

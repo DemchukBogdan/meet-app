@@ -14,6 +14,7 @@ export default tseslint.config(
       'apps/mobile/plugins/**',
       'apps/mobile/scripts/**',
       'apps/web/public/**',
+      '**/schema-sources/**',
     ],
   },
   js.configs.recommended,

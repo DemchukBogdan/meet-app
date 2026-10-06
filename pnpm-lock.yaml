@@ -309,10 +309,22 @@ importers:
 
   packages/schemas:
     dependencies:
+      lucide-react:
+        specifier: ^1.51.0
+        version: 1.51.0(@types/react@19.2.18)(react@19.2.3)
+      tailwind-variants:
+        specifier: ^1.0.0
+        version: 1.0.0(tailwindcss@4.3.3)
       zod:
         specifier: ^3.25.76
         version: 3.25.76
     devDependencies:
+      '@types/react':
+        specifier: ~19.2.18
+        version: 19.2.18
+      react:
+        specifier: 19.2.3
+        version: 19.2.3
       typescript:
         specifier: ~6.0.3
         version: 6.0.3
